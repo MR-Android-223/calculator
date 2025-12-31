@@ -46,10 +46,10 @@
             height: 50px;
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Space elements */
+            justify-content: space-between;
             padding: 0 15px;
             flex-shrink: 0;
-            direction: ltr; /* Force LTR specifically for header layout */
+            direction: ltr; 
         }
         
         .header-title { font-size: 1.1rem; font-weight: 500; }
@@ -72,7 +72,7 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
-        /* Important: Numbers must be LTR inside the box */
+        
         .main-res { font-size: 2.2rem; font-weight: bold; color: #333; direction: ltr; }
         .sub-res { font-size: 1.1rem; color: #888; direction: ltr; margin-top: 5px; }
 
@@ -80,7 +80,7 @@
             display: flex;
             gap: 10px;
             margin-top: 5px;
-            direction: rtl; /* Keep labels Arabic right-aligned */
+            direction: rtl; 
         }
         .curr-box {
             flex: 1;
@@ -90,7 +90,7 @@
             text-align: right;
         }
         .curr-box.active { border-color: var(--btn-text-blue); background: #f9fbff; }
-        .curr-label { font-size: 0.75rem; color: #666; }
+        .curr-label { font-size: 0.8rem; color: #666; font-weight: bold; }
         .curr-val { font-size: 1.1rem; font-weight: 600; direction: ltr; overflow: hidden; white-space: nowrap; }
 
         /* --- 3. Middle Toolbar --- */
@@ -103,7 +103,7 @@
             border-bottom: 1px solid #eee;
             background: #fff;
             flex-shrink: 0;
-            direction: ltr; /* Fix direction so Backspace is on Right */
+            direction: ltr; 
         }
 
         .tool-icon {
@@ -123,7 +123,6 @@
             cursor: pointer;
         }
         
-        /* The Blue Backspace Shape */
         .bs-icon {
             background-color: var(--btn-bg-equal);
             color: white;
@@ -132,13 +131,13 @@
             font-size: 1rem;
             font-weight: bold;
             position: relative;
-            margin-left: 10px; /* Space for the arrow tail */
+            margin-left: 10px; 
         }
-        /* The little triangle on the left of backspace */
+        
         .bs-icon::before {
             content: '';
             position: absolute;
-            left: -8px; /* Stick to left side */
+            left: -8px; 
             top: 50%;
             transform: translateY(-50%);
             width: 0;
@@ -154,17 +153,17 @@
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(5, 1fr);
             background-color: #fff;
-            height: 60%; /* Occupy bottom ~60% */
+            height: 60%; 
             max-height: 400px;
             flex-shrink: 0;
             border-top: 1px solid #e0e0e0;
-            direction: ltr; /* CRITICAL: This fixes the mirror issue */
+            direction: ltr; 
         }
 
         .k-btn {
             background: #fff;
             border: none;
-            border-right: 1px solid #f5f5f5; /* Since LTR, this puts line on right */
+            border-right: 1px solid #f5f5f5; 
             border-bottom: 1px solid #f5f5f5;
             font-size: 1.8rem;
             color: #333;
@@ -186,7 +185,7 @@
             background: rgba(0,0,0,0.6); z-index: 2000;
             display: none; justify-content: center; align-items: center;
             backdrop-filter: blur(2px);
-            direction: rtl; /* Keep menu arabic */
+            direction: rtl; 
         }
         .modal.show { display: flex; }
         .modal-card {
@@ -212,10 +211,10 @@
 
     <div class="app-container">
         
-        <!-- Header (Left: Menu/History, Right: Title) -->
+        <!-- Header -->
         <div class="top-header">
             <div class="header-icons">
-                <span onclick="openMenu()">&#9776;</span> <!-- Hamburger Menu -->
+                <span onclick="openMenu()">&#9776;</span> 
                 <span onclick="openMenu()" style="font-size:1.2rem">↺</span>
             </div>
             <div class="header-title">آلة حاسبة</div>
@@ -230,17 +229,17 @@
 
             <div class="inputs-wrapper">
                 <div class="curr-box active" id="lbpBox" onclick="setActiveInput('LBP')">
-                    <div class="curr-label">ليرة (LBP)</div>
+                    <div class="curr-label">ليرة</div>
                     <div class="curr-val" id="lbpInputDisplay"></div>
                 </div>
                 <div class="curr-box" id="usdBox" onclick="setActiveInput('USD')">
-                    <div class="curr-label">دولار (USD)</div>
+                    <div class="curr-label">دولار</div>
                     <div class="curr-val" id="usdInputDisplay"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Toolbar (Left: Tools, Right: Backspace) -->
+        <!-- Toolbar -->
         <div class="middle-toolbar">
             <div style="display:flex; gap:20px;">
                 <span class="tool-icon" onclick="openMenu()">...</span>
@@ -252,7 +251,7 @@
             </div>
         </div>
 
-        <!-- Keypad (LTR Grid) -->
+        <!-- Keypad -->
         <div class="keypad">
             <!-- Row 1 -->
             <button class="k-btn txt-blue" onclick="clearAll()">C</button>
@@ -297,7 +296,7 @@
             
             <label style="font-size:0.9rem; color:#666">سعر الصرف:</label>
             <div class="rate-group">
-                <input type="number" id="exchangeRate" value="11500" placeholder="سعر الصرف">
+                <input type="number" id="exchangeRate" value="89000" placeholder="سعر الصرف">
             </div>
 
             <div style="display:flex; justify-content:space-between; margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
@@ -421,11 +420,11 @@
             const subRes = document.getElementById('subResult');
 
             if(activeCurrency === 'LBP') {
-                mainRes.innerText = formatReadable(resultVal)
+                mainRes.innerText = formatReadable(resultVal); // حذف كلمة ليرة هنا
                 subRes.innerText = formatReadable(resultVal / rate) + ' $';
             } else {
                 mainRes.innerText = formatReadable(resultVal) + ' $';
-                subRes.innerText = formatReadable(resultVal * rate) + ' L.L';
+                subRes.innerText = formatReadable(resultVal * rate); // حذف كلمة ليرة هنا
             }
             saveState();
         }
@@ -445,7 +444,7 @@
                 const li = document.createElement('li');
                 li.className = 'history-item';
                 let vEq = item.eq.replace(/\*/g,'×').replace(/\//g,'÷');
-                const sym = item.curr==='LBP'?'L.L':'$';
+                const sym = item.curr==='LBP'?'':'$'; // تم إزالة كلمة ليرة من السجل أيضاً للتناسق
                 li.innerHTML = `
                     <div style="font-size:0.8rem; direction:ltr">${vEq}</div>
                     <div style="font-weight:bold; color:#2962ff; direction:ltr">= ${formatReadable(item.res)} ${sym}</div>
