@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الحاسبة الذكية</title>
+    <title>آلة حاسبة</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
 
         :root {
-            --bg-color: #f1f3f6;
-            --card-bg: #ffffff;
-            --text-color: #2d3436;
-            --accent-color: #2962ff;
-            --accent-hover: #0d47a1;
-            --result-bg: #2d3436;
-            --result-text: #ffffff;
-            --btn-bg: #ffffff;
-            --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --shadow-btn: 0 2px 4px rgba(0, 0, 0, 0.08);
+            --header-bg: #333333;
+            --bg-color: #ffffff;
+            --btn-text-blue: #2962ff;
+            --btn-bg-equal: #3955bc;
+            --border-color: #f0f0f0;
         }
 
         * {
@@ -33,7 +28,6 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            color: var(--text-color);
             overflow: hidden;
         }
 
@@ -41,169 +35,176 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 6px;
             max-width: 500px;
             margin: 0 auto;
         }
 
-        /* --- 1. Top Bar --- */
-        .top-bar {
+        /* --- 1. Header --- */
+        .top-header {
+            background-color: var(--header-bg);
+            color: white;
+            height: 50px;
             display: flex;
+            align-items: center;
+            justify-content: space-between; /* Space elements */
+            padding: 0 15px;
+            flex-shrink: 0;
+            direction: ltr; /* Force LTR specifically for header layout */
+        }
+        
+        .header-title { font-size: 1.1rem; font-weight: 500; }
+        .header-icons { display: flex; gap: 20px; font-size: 1.3rem; cursor: pointer; color: #fff; }
+
+        /* --- 2. Display --- */
+        .display-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
             justify-content: flex-end;
-            padding: 0 5px;
-            margin-bottom: 5px;
-            height: 30px;
-        }
-        .menu-btn {
-            background: none; border: none; font-size: 1.5rem; color: #636e72; cursor: pointer;
-        }
-
-        /* --- 2. Result Screen --- */
-        .result-card {
-            background: var(--result-bg);
-            color: var(--result-text);
-            border-radius: 12px;
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            box-shadow: var(--shadow-soft);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-end;
-            height: 85px; 
-            flex-shrink: 0;
-        }
-        
-        .main-result {
-            font-size: 1.6rem;
-            font-weight: 800;
-            width: 100%;
-            text-align: right;
-            white-space: nowrap;
-            overflow: hidden;
-            direction: ltr;
-        }
-        
-        .sub-result {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            width: 100%;
-            text-align: right;
-            direction: ltr;
-            margin-top: 4px;
-            white-space: nowrap;
+            padding: 10px 20px;
+            background: #ffffff;
             overflow: hidden;
         }
 
-        /* --- 3. Input Screens --- */
-        .screens-wrapper {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            flex-shrink: 0;
+        .result-line {
+            text-align: right;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
         }
+        /* Important: Numbers must be LTR inside the box */
+        .main-res { font-size: 2.2rem; font-weight: bold; color: #333; direction: ltr; }
+        .sub-res { font-size: 1.1rem; color: #888; direction: ltr; margin-top: 5px; }
 
-        .screen-box {
-            background: var(--card-bg);
+        .inputs-wrapper {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            direction: rtl; /* Keep labels Arabic right-aligned */
+        }
+        .curr-box {
             flex: 1;
-            padding: 8px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-soft);
-            border: 2px solid transparent;
+            padding: 5px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            text-align: right;
+        }
+        .curr-box.active { border-color: var(--btn-text-blue); background: #f9fbff; }
+        .curr-label { font-size: 0.75rem; color: #666; }
+        .curr-val { font-size: 1.1rem; font-weight: 600; direction: ltr; overflow: hidden; white-space: nowrap; }
+
+        /* --- 3. Middle Toolbar --- */
+        .middle-toolbar {
+            height: 45px;
             display: flex;
-            flex-direction: column;
-            height: 60px;
-            cursor: pointer;
-            position: relative;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid #eee;
+            background: #fff;
+            flex-shrink: 0;
+            direction: ltr; /* Fix direction so Backspace is on Right */
         }
 
-        .screen-box.active { border-color: var(--accent-color); background-color: #fbfdff; }
-        .box-label { font-size: 0.7rem; color: #888; margin-bottom: 2px; }
-        .box-value {
+        .tool-icon {
+            font-size: 1.5rem;
+            color: var(--btn-text-blue);
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        .backspace-btn {
+            width: 40px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* The Blue Backspace Shape */
+        .bs-icon {
+            background-color: var(--btn-bg-equal);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-size: 1rem;
-            font-weight: 600; color: #2d3436;
-            direction: ltr; text-align: right;
-            white-space: nowrap; overflow: hidden;
+            font-weight: bold;
+            position: relative;
+            margin-left: 10px; /* Space for the arrow tail */
+        }
+        /* The little triangle on the left of backspace */
+        .bs-icon::before {
+            content: '';
+            position: absolute;
+            left: -8px; /* Stick to left side */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid var(--btn-bg-equal);
         }
 
         /* --- 4. Keypad --- */
-        .keypad-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-height: 0;
-        }
-
-        .main-grid {
+        .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            gap: 6px;
-            flex-grow: 1;
-            direction: ltr;
+            background-color: #fff;
+            height: 60%; /* Occupy bottom ~60% */
+            max-height: 400px;
+            flex-shrink: 0;
+            border-top: 1px solid #e0e0e0;
+            direction: ltr; /* CRITICAL: This fixes the mirror issue */
         }
 
-        .btn {
-            background: var(--btn-bg);
-            border-radius: 8px;
+        .k-btn {
+            background: #fff;
             border: none;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #2d3436;
-            box-shadow: var(--shadow-btn);
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; padding: 0;
+            border-right: 1px solid #f5f5f5; /* Since LTR, this puts line on right */
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 1.8rem;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            outline: none;
         }
-        .btn:active { background: #eee; }
-        .btn-op { color: var(--accent-color); background-color: #f8f9fa; font-size: 1.5rem; }
-        .btn-del { color: #e74c3c; font-size: 1.2rem; }
 
-        .btn-confirm {
-            background: var(--accent-color);
-            color: white;
-            font-size: 2rem;
-            border-radius: 10px;
-            height: 55px;
-            box-shadow: 0 4px 10px rgba(41, 98, 255, 0.3);
-            border: none; width: 100%; flex-shrink: 0;
-        }
-        .btn-confirm:active { background: var(--accent-hover); }
+        .k-btn:active { background-color: #f0f0f0; }
+        .txt-blue { color: var(--btn-text-blue); font-size: 1.6rem; }
+        .bg-blue { background-color: var(--btn-bg-equal); color: white; font-size: 2.2rem; }
+        .bg-blue:active { background-color: #2c4296; }
 
-        /* --- Modal --- */
+        /* Modal */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 2000;
             display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(2px);
+            direction: rtl; /* Keep menu arabic */
         }
         .modal.show { display: flex; }
         .modal-card {
             background: #fff; width: 85%; max-width: 320px;
-            border-radius: 16px; padding: 20px; max-height: 80vh;
+            border-radius: 8px; padding: 20px; max-height: 80vh;
             display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        
-        .modal-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        
-        .rate-group {
-            background: #f1f3f6; padding: 10px; border-radius: 10px;
-            margin-bottom: 15px; text-align: center;
+        .rate-group input {
+            width: 100%; border: 1px solid #ddd; padding: 10px;
+            font-size: 1.2rem; margin: 10px 0; text-align: center;
+            border-radius: 4px; color: var(--btn-text-blue); font-weight: bold;
         }
-        .rate-label { font-size: 0.9rem; color: #636e72; margin-bottom: 5px; display: block; }
-        .rate-input {
-            width: 100%; border: none; background: transparent;
-            font-size: 1.5rem; font-weight: bold; color: var(--accent-color);
-            text-align: center; outline: none;
-        }
-
-        .history-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; border-top: 1px solid #eee; padding-top: 10px; }
+        .history-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; max-height: 300px; padding-top:10px;}
         .history-item { 
             padding: 10px; border-bottom: 1px solid #f1f1f1; 
-            display: flex; flex-direction: column; gap: 4px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .h-eq { font-size: 0.85rem; color: #666; direction: ltr; text-align: left; }
-        .h-res { font-size: 1rem; font-weight: bold; color: var(--accent-color); direction: ltr; text-align: left;}
 
     </style>
 </head>
@@ -211,59 +212,77 @@
 
     <div class="app-container">
         
-        <div class="top-bar">
-            <button class="menu-btn" onclick="openMenu()">&#8942;</button>
+        <!-- Header (Left: Menu/History, Right: Title) -->
+        <div class="top-header">
+            <div class="header-icons">
+                <span onclick="openMenu()">&#9776;</span> <!-- Hamburger Menu -->
+                <span onclick="openMenu()" style="font-size:1.2rem">↺</span>
+            </div>
+            <div class="header-title">آلة حاسبة</div>
         </div>
 
-        <!-- Result Screen -->
-        <div class="result-card">
-            <div class="main-result" id="mainResult">0</div>
-            <div class="sub-result" id="subResult">0 $</div>
-        </div>
-
-        <!-- Input Screens -->
-        <div class="screens-wrapper">
-            <div class="screen-box active" id="lbpBox" onclick="setActiveInput('LBP')">
-                <span class="box-label">ليرة (عملية)</span>
-                <div class="box-value" id="lbpInputDisplay"></div>
+        <!-- Display -->
+        <div class="display-area">
+            <div class="result-line">
+                <div class="main-res" id="mainResult">0</div>
+                <div class="sub-res" id="subResult">0 $</div>
             </div>
 
-            <div class="screen-box" id="usdBox" onclick="setActiveInput('USD')">
-                <span class="box-label">دولار (عملية)</span>
-                <div class="box-value" id="usdInputDisplay"></div>
+            <div class="inputs-wrapper">
+                <div class="curr-box active" id="lbpBox" onclick="setActiveInput('LBP')">
+                    <div class="curr-label">ليرة (LBP)</div>
+                    <div class="curr-val" id="lbpInputDisplay"></div>
+                </div>
+                <div class="curr-box" id="usdBox" onclick="setActiveInput('USD')">
+                    <div class="curr-label">دولار (USD)</div>
+                    <div class="curr-val" id="usdInputDisplay"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Keypad -->
-        <div class="keypad-container">
-            <div class="main-grid">
-                <button class="btn btn-del" onclick="clearAll()">AC</button>
-                <button class="btn btn-del" onclick="deleteChar()">⌫</button>
-                <button class="btn btn-op" onclick="appendOperator('%')">%</button>
-                <button class="btn btn-op" onclick="appendOperator('/')">÷</button>
-                
-                <button class="btn" onclick="appendNumber('7')">7</button>
-                <button class="btn" onclick="appendNumber('8')">8</button>
-                <button class="btn" onclick="appendNumber('9')">9</button>
-                <button class="btn btn-op" onclick="appendOperator('*')">×</button>
-                
-                <button class="btn" onclick="appendNumber('4')">4</button>
-                <button class="btn" onclick="appendNumber('5')">5</button>
-                <button class="btn" onclick="appendNumber('6')">6</button>
-                <button class="btn btn-op" onclick="appendOperator('-')">-</button>
-                
-                <button class="btn" onclick="appendNumber('1')">1</button>
-                <button class="btn" onclick="appendNumber('2')">2</button>
-                <button class="btn" onclick="appendNumber('3')">3</button>
-                <button class="btn btn-op" onclick="appendOperator('+')">+</button>
-                
-                <button class="btn" onclick="appendNumber('0')">0</button>
-                <button class="btn" onclick="appendNumber('00')">00</button>
-                <button class="btn" onclick="appendNumber('000')">000</button>
-                <button class="btn" onclick="appendNumber('.')">.</button>
+        <!-- Toolbar (Left: Tools, Right: Backspace) -->
+        <div class="middle-toolbar">
+            <div style="display:flex; gap:20px;">
+                <span class="tool-icon" onclick="openMenu()">...</span>
+                <span class="tool-icon" style="font-size:1.2rem">^</span>
             </div>
             
-            <button class="btn btn-confirm" onclick="calculate(true)">=</button>
+            <div class="backspace-btn" onclick="deleteChar()">
+                <div class="bs-icon">✕</div>
+            </div>
+        </div>
+
+        <!-- Keypad (LTR Grid) -->
+        <div class="keypad">
+            <!-- Row 1 -->
+            <button class="k-btn txt-blue" onclick="clearAll()">C</button>
+            <button class="k-btn txt-blue" onclick="appendParens()">()</button>
+            <button class="k-btn txt-blue" onclick="appendOperator('%')">%</button>
+            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('/')">÷</button>
+
+            <!-- Row 2 -->
+            <button class="k-btn" onclick="appendNumber('7')">7</button>
+            <button class="k-btn" onclick="appendNumber('8')">8</button>
+            <button class="k-btn" onclick="appendNumber('9')">9</button>
+            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('*')">×</button>
+
+            <!-- Row 3 -->
+            <button class="k-btn" onclick="appendNumber('4')">4</button>
+            <button class="k-btn" onclick="appendNumber('5')">5</button>
+            <button class="k-btn" onclick="appendNumber('6')">6</button>
+            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('-')">-</button>
+
+            <!-- Row 4 -->
+            <button class="k-btn" onclick="appendNumber('1')">1</button>
+            <button class="k-btn" onclick="appendNumber('2')">2</button>
+            <button class="k-btn" onclick="appendNumber('3')">3</button>
+            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('+')">+</button>
+
+            <!-- Row 5 -->
+            <button class="k-btn" onclick="appendNumber('0')">0</button>
+            <button class="k-btn" onclick="appendNumber('00')">00</button>
+            <button class="k-btn" onclick="appendNumber('.')">,</button>
+            <button class="k-btn bg-blue" onclick="calculate(true)">=</button>
         </div>
 
     </div>
@@ -271,21 +290,21 @@
     <!-- Modal -->
     <div id="menuModal" class="modal">
         <div class="modal-card">
-            <div class="modal-title">
-                <span>الإعدادات والمحفوظات</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span style="font-weight:bold">الإعدادات</span>
                 <span onclick="closeMenu()" style="cursor:pointer">✕</span>
             </div>
             
+            <label style="font-size:0.9rem; color:#666">سعر الصرف:</label>
             <div class="rate-group">
-                <label class="rate-label">سعر الصرف الحالي</label>
-                <input type="number" id="exchangeRate" class="rate-input" value="11500" placeholder="ادخل السعر">
+                <input type="number" id="exchangeRate" value="11500" placeholder="سعر الصرف">
             </div>
 
-            <h4 style="margin:5px 0; color:#444">آخر العمليات:</h4>
-            <ul id="historyList" class="history-list">
-                <!-- Items -->
-            </ul>
-            <button class="btn" style="background:#ffebee; color:#d32f2f; margin-top:10px; font-size:1rem;" onclick="clearHistory()">مسح السجل</button>
+            <div style="display:flex; justify-content:space-between; margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                <span style="font-weight:bold">السجل</span>
+                <span style="color:red; font-size:0.8rem; cursor:pointer" onclick="clearHistory()">مسح</span>
+            </div>
+            <ul id="historyList" class="history-list"></ul>
         </div>
     </div>
 
@@ -300,11 +319,11 @@
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
             o.frequency.setValueAtTime(600, audioCtx.currentTime);
-            o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+            o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
             g.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
             o.connect(g); g.connect(audioCtx.destination);
-            o.start(); o.stop(audioCtx.currentTime + 0.1);
+            o.start(); o.stop(audioCtx.currentTime + 0.05);
         }
 
         window.onload = () => { loadState(); updateUI(); history.pushState(null,null,location.href); };
@@ -312,22 +331,16 @@
         function setActiveInput(curr) {
             playSound();
             activeCurrency = curr;
-            document.getElementById('lbpBox').className = `screen-box ${curr==='LBP'?'active':''}`;
-            document.getElementById('usdBox').className = `screen-box ${curr==='USD'?'active':''}`;
+            document.getElementById('lbpBox').className = `curr-box ${curr==='LBP'?'active':''}`;
+            document.getElementById('usdBox').className = `curr-box ${curr==='USD'?'active':''}`;
             updateUI();
         }
 
-        // --- FIX: Prevent leading Zero issue (02000) ---
         function appendNumber(n) {
             playSound();
-            // اذا كان الرقم الحالي صفر فقط، والرقم الجديد ليس نقطة، استبدل الصفر بالرقم الجديد
             if (currentInput === '0' && n !== '.') {
-                if(n === '00' || n === '000') {
-                    // اذا كان صفر وضغطت 00 يبقى صفر
-                    currentInput = '0';
-                } else {
-                    currentInput = n;
-                }
+                if(n === '00') currentInput = '0';
+                else currentInput = n;
             } else {
                 currentInput += n;
             }
@@ -341,6 +354,21 @@
             else currentInput += op;
             updateUI();
         }
+
+        function appendParens() {
+            playSound();
+            const openCount = (currentInput.match(/\(/g) || []).length;
+            const closeCount = (currentInput.match(/\)/g) || []).length;
+            const last = currentInput.slice(-1);
+            if (openCount > closeCount && ['0','1','2','3','4','5','6','7','8','9',')'].includes(last)) {
+                currentInput += ')';
+            } else {
+                if (['0','1','2','3','4','5','6','7','8','9'].includes(last)) currentInput += '*(';
+                else currentInput += '(';
+            }
+            updateUI();
+        }
+
         function deleteChar() { playSound(); currentInput = currentInput.toString().slice(0,-1); updateUI(); }
         function clearAll() { playSound(); currentInput = ''; updateUI(); }
 
@@ -354,7 +382,6 @@
             } catch (e) {}
         }
 
-        // Formatter with commas everywhere
         function formatReadable(num) {
             if (num === undefined || num === null) return '0';
             let str = num.toLocaleString('en-US', { maximumFractionDigits: 12, useGrouping: false });
@@ -369,7 +396,6 @@
         function updateUI() {
             const rate = parseFloat(document.getElementById('exchangeRate').value) || 1;
             
-            // Equation Display
             let visualEq = currentInput.replace(/\*/g,'×').replace(/\//g,'÷');
             visualEq = visualEq.replace(/\d+/g, (n) => Number(n).toLocaleString('en-US'));
 
@@ -384,11 +410,10 @@
                 lbpIn.innerText = '---';
             }
 
-            // Result Calc
             let resultVal = 0;
             try {
                 let clean = currentInput;
-                if(['+','-','*','/','%'].includes(clean.slice(-1))) clean = clean.slice(0,-1);
+                if(['+','-','*','/','%','('].includes(clean.slice(-1))) clean = clean.slice(0,-1);
                 resultVal = clean ? eval(clean) : 0;
             } catch { resultVal = 0; }
 
@@ -396,13 +421,12 @@
             const subRes = document.getElementById('subResult');
 
             if(activeCurrency === 'LBP') {
-                mainRes.innerText = formatReadable(resultVal) + ' L.L';
+                mainRes.innerText = formatReadable(resultVal)
                 subRes.innerText = formatReadable(resultVal / rate) + ' $';
             } else {
                 mainRes.innerText = formatReadable(resultVal) + ' $';
                 subRes.innerText = formatReadable(resultVal * rate) + ' L.L';
             }
-            
             saveState();
         }
 
@@ -417,18 +441,14 @@
         function renderHistory() {
             const list = document.getElementById('historyList');
             list.innerHTML = '';
-            if(!historyData.length) {
-                list.innerHTML = '<li style="text-align:center;color:#999;padding:10px">لا يوجد بيانات</li>';
-                return;
-            }
             historyData.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                const currLabel = item.curr === 'LBP' ? 'ليرة' : '$';
                 let vEq = item.eq.replace(/\*/g,'×').replace(/\//g,'÷');
+                const sym = item.curr==='LBP'?'L.L':'$';
                 li.innerHTML = `
-                    <div class="h-eq">${vEq} (${currLabel})</div>
-                    <div class="h-res">= ${formatReadable(item.res)}</div>
+                    <div style="font-size:0.8rem; direction:ltr">${vEq}</div>
+                    <div style="font-weight:bold; color:#2962ff; direction:ltr">= ${formatReadable(item.res)} ${sym}</div>
                 `;
                 li.onclick = () => {
                     currentInput = item.eq; 
@@ -439,25 +459,21 @@
             });
         }
 
-        function openMenu() {
-            renderHistory();
-            document.getElementById('menuModal').classList.add('show');
-            history.pushState({modal:true},null,location.href);
-        }
+        function openMenu() { renderHistory(); document.getElementById('menuModal').classList.add('show'); history.pushState({modal:true},null,location.href); }
         function closeMenu() { document.getElementById('menuModal').classList.remove('show'); }
         function clearHistory() { historyData=[]; saveState(); renderHistory(); }
 
         function saveState() {
-            localStorage.setItem('x_rate', document.getElementById('exchangeRate').value);
-            localStorage.setItem('x_in', currentInput);
-            localStorage.setItem('x_curr', activeCurrency);
-            localStorage.setItem('x_hist', JSON.stringify(historyData));
+            localStorage.setItem('z_rate', document.getElementById('exchangeRate').value);
+            localStorage.setItem('z_in', currentInput);
+            localStorage.setItem('z_curr', activeCurrency);
+            localStorage.setItem('z_hist', JSON.stringify(historyData));
         }
         function loadState() {
-            if(localStorage.getItem('x_rate')) document.getElementById('exchangeRate').value = localStorage.getItem('x_rate');
-            if(localStorage.getItem('x_in')) currentInput = localStorage.getItem('x_in');
-            if(localStorage.getItem('x_curr')) setActiveInput(localStorage.getItem('x_curr'));
-            if(localStorage.getItem('x_hist')) historyData = JSON.parse(localStorage.getItem('x_hist'));
+            if(localStorage.getItem('z_rate')) document.getElementById('exchangeRate').value = localStorage.getItem('z_rate');
+            if(localStorage.getItem('z_in')) currentInput = localStorage.getItem('z_in');
+            if(localStorage.getItem('z_curr')) setActiveInput(localStorage.getItem('z_curr'));
+            if(localStorage.getItem('z_hist')) historyData = JSON.parse(localStorage.getItem('z_hist'));
         }
 
         window.addEventListener('popstate', ()=>{
@@ -466,11 +482,12 @@
             else if(currentInput.length>0) deleteChar();
         });
         document.getElementById('exchangeRate').addEventListener('input', () => { updateUI(); saveState(); });
-        document.querySelectorAll('.btn').forEach(b=>{
-            b.addEventListener('touchstart',function(){this.style.background='#eee'});
-            b.addEventListener('touchend',function(){this.style.background='var(--btn-bg)'});
+        document.querySelectorAll('button').forEach(b=>{
+            b.addEventListener('touchstart',function(){this.style.backgroundColor='#eee'});
+            b.addEventListener('touchend',function(){this.style.backgroundColor='var(--btn-bg)'});
         });
-        document.querySelector('.btn-confirm').addEventListener('touchend',function(){this.style.background='var(--accent-color)'});
+        document.querySelector('.bg-blue').addEventListener('touchstart',function(){this.style.backgroundColor='#2c4296'});
+        document.querySelector('.bg-blue').addEventListener('touchend',function(){this.style.backgroundColor='var(--btn-bg-equal)'});
 
     </script>
 </body>
