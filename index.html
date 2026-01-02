@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>آلة حاسبة</title>
+    <title>الحاسبة الاحترافية</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 
         :root {
-            --header-bg: #333333;
             --bg-color: #ffffff;
-            --btn-text-blue: #2962ff;
-            --btn-bg-equal: #3955bc;
-            --border-color: #f0f0f0;
+            --text-color: #2d3436;
+            --orange-color: #ff7f30;
+            --blue-color: #2962ff;
+            --gray-icon: #9e9e9e;
+            --gray-light: #f5f6fa;
+            --grid-line: #f2f2f2; /* لون خطوط الجدول الفاتحة */
         }
 
         * {
@@ -29,6 +31,7 @@
             padding: 0;
             background-color: var(--bg-color);
             overflow: hidden;
+            color: var(--text-color);
         }
 
         .app-container {
@@ -37,171 +40,217 @@
             flex-direction: column;
             max-width: 500px;
             margin: 0 auto;
+            position: relative;
         }
 
         /* --- 1. Header --- */
         .top-header {
-            background-color: var(--header-bg);
-            color: white;
-            height: 50px;
+            background-color: #ffffff;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 15px;
+            padding: 0 30px;
             flex-shrink: 0;
             direction: ltr; 
+            z-index: 100;
         }
-        
-        .header-title { font-size: 1.1rem; font-weight: 500; }
-        .header-icons { display: flex; gap: 20px; font-size: 1.3rem; cursor: pointer; color: #fff; }
 
-        /* --- 2. Display --- */
+        .nav-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .nav-icon:active { transform: scale(0.9); }
+        .nav-icon svg { width: 32px; height: 32px; }
+
+        /* --- 2. Tools Menu --- */
+        .tools-bar {
+            background: #ffffff;
+            padding: 15px;
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            border-bottom: 1px solid #f0f0f0;
+            position: absolute;
+            top: 70px;
+            width: 100%;
+            z-index: 99;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            direction: rtl;
+        }
+
+        .tool-box {
+            background: var(--gray-light);
+            border-radius: 12px;
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            height: 80px;
+            border: 2px solid transparent;
+        }
+        .tool-box.active { border-color: var(--blue-color); background: #e3f2fd; }
+        .tool-icon-img { font-size: 1.8rem; margin-bottom: 5px; }
+        .tool-name { font-size: 0.75rem; font-weight: bold; color: #555; text-align: center;}
+
+        /* --- 3. Display --- */
         .display-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 10px 20px;
+            padding: 10px 25px;
             background: #ffffff;
             overflow: hidden;
         }
 
         .result-line {
             text-align: right;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            margin-bottom: 15px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
         
-        .main-res { font-size: 2.2rem; font-weight: bold; color: #333; direction: ltr; }
-        .sub-res { font-size: 1.1rem; color: #888; direction: ltr; margin-top: 5px; }
+        .main-res { font-size: 2.4rem; font-weight: 800; color: #2d3436; direction: ltr; word-wrap: break-word; line-height: 1.1;}
+        .sub-res { font-size: 1.1rem; color: #b2bec3; direction: ltr; margin-top: 5px; font-weight: 500;}
 
+        /* --- تعديل المربعات (إطار كامل) --- */
         .inputs-wrapper {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             margin-top: 5px;
             direction: rtl; 
         }
         .curr-box {
             flex: 1;
-            padding: 5px;
-            border: 1px solid transparent;
-            border-radius: 5px;
+            padding: 8px 12px;
+            /* تم التعديل: إطار شفاف يحيط بكل الجهات */
+            border: 2px solid transparent; 
+            background: var(--gray-light);
+            border-radius: 12px;
             text-align: right;
+            transition: all 0.3s;
+            position: relative;
         }
-        .curr-box.active { border-color: var(--btn-text-blue); background: #f9fbff; }
-        .curr-label { font-size: 0.8rem; color: #666; font-weight: bold; }
-        .curr-val { font-size: 1.1rem; font-weight: 600; direction: ltr; overflow: hidden; white-space: nowrap; }
+        .curr-box.active { 
+            /* تم التعديل: تلوين الإطار بالكامل */
+            border-color: var(--blue-color); 
+            background: #fff; 
+            box-shadow: 0 4px 15px rgba(41, 98, 255, 0.1); 
+        }
+        .curr-label { font-size: 0.75rem; color: #636e72; font-weight: bold; margin-bottom: 2px;}
+        .curr-val { font-size: 1.3rem; font-weight: 700; direction: ltr; overflow: hidden; white-space: nowrap; color: #2d3436;}
 
-        /* --- 3. Middle Toolbar --- */
+        /* --- 4. Keypad with Grid Lines --- */
         .middle-toolbar {
-            height: 45px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            border-bottom: 1px solid #eee;
-            background: #fff;
+            padding: 0 25px;
+            background: #ffffff;
             flex-shrink: 0;
             direction: ltr; 
-        }
-
-        .tool-icon {
-            font-size: 1.5rem;
-            color: var(--btn-text-blue);
-            font-weight: bold;
-            cursor: pointer;
-            letter-spacing: 2px;
+            border-bottom: 1px solid var(--grid-line); /* خط فاصل خفيف */
         }
 
         .backspace-btn {
-            width: 40px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: var(--orange-color);
+            font-size: 1.5rem;
             cursor: pointer;
-        }
-        
-        .bs-icon {
-            background-color: var(--btn-bg-equal);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: bold;
-            position: relative;
-            margin-left: 10px; 
-        }
-        
-        .bs-icon::before {
-            content: '';
-            position: absolute;
-            left: -8px; 
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-right: 10px solid var(--btn-bg-equal);
+            padding: 5px;
         }
 
-        /* --- 4. Keypad --- */
         .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(5, 1fr);
-            background-color: #fff;
-            height: 60%; 
-            max-height: 400px;
+            background-color: #ffffff;
+            height: 52%; 
+            max-height: 420px;
             flex-shrink: 0;
-            border-top: 1px solid #e0e0e0;
             direction: ltr; 
+            /* لا يوجد مسافات هنا، سنستخدم البوردر للتقسيم */
         }
 
         .k-btn {
-            background: #fff;
+            background: #ffffff;
             border: none;
-            border-right: 1px solid #f5f5f5; 
-            border-bottom: 1px solid #f5f5f5;
-            font-size: 1.8rem;
-            color: #333;
+            /* --- إضافة خطوط الشبكة الفاتحة --- */
+            border-right: 1px solid var(--grid-line);
+            border-top: 1px solid var(--grid-line);
+            
+            font-size: 1.7rem;
+            color: #2d3436;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             outline: none;
+            transition: background 0.1s;
         }
+        
+        /* إزالة الخطوط من الحواف الخارجية لجمالية أكثر */
+        .k-btn:nth-child(4n) { border-right: none; } /* آخر عمود بلا خط يمين */
 
-        .k-btn:active { background-color: #f0f0f0; }
-        .txt-blue { color: var(--btn-text-blue); font-size: 1.6rem; }
-        .bg-blue { background-color: var(--btn-bg-equal); color: white; font-size: 2.2rem; }
-        .bg-blue:active { background-color: #2c4296; }
+        .k-btn.pressed { background-color: #f7f7f7; }
+        
+        .txt-blue { color: var(--blue-color); font-weight: 500; font-size: 1.5rem;}
+        .bg-blue { 
+            background-color: var(--orange-color) !important; 
+            color: white; 
+            font-size: 2rem; 
+            border-radius: 12px; /* جعل زر اليساوي مميز قليلاً */
+            margin: 5px; /* تصغيره قليلاً ليفصل عن الخطوط */
+            height: auto;
+            border: none; /* إزالة خطوط الشبكة عن زر اليساوي */
+            box-shadow: 0 4px 10px rgba(255, 159, 67, 0.3);
+        }
+        .bg-blue.pressed { transform: scale(0.95); opacity: 0.9; }
+
+        /* Age Result Style */
+        .age-result-container {
+            display: flex; gap: 8px; justify-content: center; width: 100%; direction: rtl;
+        }
+        .age-box-res {
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+            padding: 5px; text-align: center; flex: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .age-num { font-size: 1.3rem; font-weight: 800; color: var(--blue-color); display: block;}
+        .age-txt { font-size: 0.75rem; color: #888; }
 
         /* Modal */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 2000;
+            background: rgba(0,0,0,0.5); z-index: 2000;
             display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(2px);
-            direction: rtl; 
+            backdrop-filter: blur(4px); direction: rtl; 
         }
         .modal.show { display: flex; }
         .modal-card {
             background: #fff; width: 85%; max-width: 320px;
-            border-radius: 8px; padding: 20px; max-height: 80vh;
+            border-radius: 20px; padding: 20px; max-height: 70vh;
             display: flex; flex-direction: column;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
+        
         .rate-group input {
-            width: 100%; border: 1px solid #ddd; padding: 10px;
-            font-size: 1.2rem; margin: 10px 0; text-align: center;
-            border-radius: 4px; color: var(--btn-text-blue); font-weight: bold;
+            width: 100%; border: none; background: #f5f6fa; padding: 15px;
+            font-size: 1.4rem; margin: 15px 0; text-align: center;
+            border-radius: 12px; color: var(--orange-color); font-weight: 800; outline: none;
         }
-        .history-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; max-height: 300px; padding-top:10px;}
+        .history-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; padding-top:10px;}
         .history-item { 
-            padding: 10px; border-bottom: 1px solid #f1f1f1; 
+            padding: 12px; border-bottom: 1px solid #f5f5f5; 
             display: flex; justify-content: space-between; align-items: center;
         }
 
@@ -213,103 +262,156 @@
         
         <!-- Header -->
         <div class="top-header">
-            <div class="header-icons">
-                <span onclick="openMenu()">&#9776;</span> 
-                <span onclick="openMenu()" style="font-size:1.2rem">↺</span>
+            <!-- Rate Icon -->
+            <div class="nav-icon" id="btnRate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-icon)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9.5L12 3l9 6.5v10.5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2z"></path>
+                    <text x="12" y="18" text-anchor="middle" font-size="12" fill="var(--gray-icon)" stroke="none" font-weight="bold">$</text>
+                </svg>
             </div>
-            <div class="header-title">آلة حاسبة</div>
+
+            <!-- Grid Icon -->
+            <div class="nav-icon" id="btnGrid">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-icon)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="2"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="2"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="2"></rect>
+                    <line x1="14" y1="16" x2="21" y2="16"></line>
+                    <line x1="14" y1="19" x2="21" y2="19"></line>
+                </svg>
+            </div>
+
+            <!-- Home Icon -->
+            <div class="nav-icon" id="btnHome">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect x="0" y="0" width="24" height="24" rx="8" fill="#ff7f30"></rect>
+                    <line x1="7" y1="10" x2="17" y2="10" stroke="white" stroke-width="2.5" stroke-linecap="round"></line>
+                    <line x1="7" y1="14" x2="17" y2="14" stroke="white" stroke-width="2.5" stroke-linecap="round"></line>
+                </svg>
+            </div>
         </div>
 
-        <!-- Display -->
+        <!-- Tools Menu -->
+        <div class="tools-bar" id="toolsMenu">
+            <div class="tool-box" id="toolAge">
+                <span class="tool-icon-img">🎂</span>
+                <span class="tool-name">العمر</span>
+            </div>
+            <div class="tool-box" id="toolDiff">
+                <span class="tool-icon-img">📅</span>
+                <span class="tool-name">فرق التواريخ</span>
+            </div>
+            <div class="tool-box" id="toolScale">
+                <span class="tool-icon-img">⚖️</span>
+                <span class="tool-name">الميزان</span>
+            </div>
+            <div class="tool-box" id="toolSpeed">
+                <span class="tool-icon-img">🚗</span>
+                <span class="tool-name">السرعة</span>
+            </div>
+            <div class="tool-box" id="toolHistory">
+                <span class="tool-icon-img">🕒</span>
+                <span class="tool-name">السجل</span>
+            </div>
+        </div>
+
+        <!-- Display Area -->
         <div class="display-area">
             <div class="result-line">
                 <div class="main-res" id="mainResult">0</div>
-                <div class="sub-res" id="subResult">0 $</div>
+                <div class="sub-res" id="subResult"></div>
             </div>
 
-            <div class="inputs-wrapper">
-                <div class="curr-box active" id="lbpBox" onclick="setActiveInput('LBP')">
-                    <div class="curr-label">ليرة</div>
-                    <div class="curr-val" id="lbpInputDisplay"></div>
+            <div class="inputs-wrapper" id="inputsContainer">
+                <div class="curr-box active" id="box1">
+                    <div class="curr-label" id="label1">ليرة</div>
+                    <div class="curr-val" id="val1"></div>
                 </div>
-                <div class="curr-box" id="usdBox" onclick="setActiveInput('USD')">
-                    <div class="curr-label">دولار</div>
-                    <div class="curr-val" id="usdInputDisplay"></div>
+                <div class="curr-box" id="box2">
+                    <div class="curr-label" id="label2">دولار</div>
+                    <div class="curr-val" id="val2"></div>
+                </div>
+                <div class="curr-box" id="box3" style="display:none">
+                    <div class="curr-label" id="label3">سنة</div>
+                    <div class="curr-val" id="val3"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Toolbar -->
+        <!-- Middle Toolbar -->
         <div class="middle-toolbar">
-            <div style="display:flex; gap:20px;">
-                <span class="tool-icon" onclick="openMenu()">...</span>
-                <span class="tool-icon" style="font-size:1.2rem">^</span>
-            </div>
-            
-            <div class="backspace-btn" onclick="deleteChar()">
-                <div class="bs-icon">✕</div>
-            </div>
+            <div></div> 
+            <div class="backspace-btn" id="btnBackspace">⌫</div>
         </div>
 
-        <!-- Keypad -->
+        <!-- Keypad with Grid Lines -->
         <div class="keypad">
-            <!-- Row 1 -->
-            <button class="k-btn txt-blue" onclick="clearAll()">C</button>
-            <button class="k-btn txt-blue" onclick="appendParens()">()</button>
-            <button class="k-btn txt-blue" onclick="appendOperator('%')">%</button>
-            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('/')">÷</button>
+            <button class="k-btn txt-blue" data-action="clear">C</button>
+            <button class="k-btn txt-blue" data-action="parens">()</button>
+            <button class="k-btn txt-blue" data-val="%">%</button>
+            <button class="k-btn txt-blue" data-val="/">÷</button>
 
-            <!-- Row 2 -->
-            <button class="k-btn" onclick="appendNumber('7')">7</button>
-            <button class="k-btn" onclick="appendNumber('8')">8</button>
-            <button class="k-btn" onclick="appendNumber('9')">9</button>
-            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('*')">×</button>
+            <button class="k-btn" data-val="7">7</button>
+            <button class="k-btn" data-val="8">8</button>
+            <button class="k-btn" data-val="9">9</button>
+            <button class="k-btn txt-blue" data-val="*">×</button>
 
-            <!-- Row 3 -->
-            <button class="k-btn" onclick="appendNumber('4')">4</button>
-            <button class="k-btn" onclick="appendNumber('5')">5</button>
-            <button class="k-btn" onclick="appendNumber('6')">6</button>
-            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('-')">-</button>
+            <button class="k-btn" data-val="4">4</button>
+            <button class="k-btn" data-val="5">5</button>
+            <button class="k-btn" data-val="6">6</button>
+            <button class="k-btn txt-blue" data-val="-">-</button>
 
-            <!-- Row 4 -->
-            <button class="k-btn" onclick="appendNumber('1')">1</button>
-            <button class="k-btn" onclick="appendNumber('2')">2</button>
-            <button class="k-btn" onclick="appendNumber('3')">3</button>
-            <button class="k-btn txt-blue" style="font-size:2rem" onclick="appendOperator('+')">+</button>
+            <button class="k-btn" data-val="1">1</button>
+            <button class="k-btn" data-val="2">2</button>
+            <button class="k-btn" data-val="3">3</button>
+            <button class="k-btn txt-blue" data-val="+">+</button>
 
-            <!-- Row 5 -->
-            <button class="k-btn" onclick="appendNumber('0')">0</button>
-            <button class="k-btn" onclick="appendNumber('00')">00</button>
-            <button class="k-btn" onclick="appendNumber('.')">,</button>
-            <button class="k-btn bg-blue" onclick="calculate(true)">=</button>
+            <button class="k-btn" data-val="0">0</button>
+            <button class="k-btn" data-val="00">00</button>
+            <button class="k-btn" data-val=".">,</button>
+            <button class="k-btn bg-blue" id="btnEqual" data-action="calc">=</button>
         </div>
 
     </div>
 
-    <!-- Modal -->
-    <div id="menuModal" class="modal">
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span style="font-weight:bold">الإعدادات</span>
-                <span onclick="closeMenu()" style="cursor:pointer">✕</span>
+                <span style="font-weight:bold; font-size:1.2rem">السجل</span>
+                <span id="btnCloseHist" style="cursor:pointer; font-size:1.5rem">✕</span>
             </div>
-            
-            <label style="font-size:0.9rem; color:#666">سعر الصرف:</label>
-            <div class="rate-group">
-                <input type="number" id="exchangeRate" value="89000" placeholder="سعر الصرف">
-            </div>
-
-            <div style="display:flex; justify-content:space-between; margin-top:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                <span style="font-weight:bold">السجل</span>
-                <span style="color:red; font-size:0.8rem; cursor:pointer" onclick="clearHistory()">مسح</span>
+            <div style="text-align:left; margin-bottom:10px;">
+                <span style="color:red; font-size:0.9rem; cursor:pointer" id="btnClearHistory">مسح السجل</span>
             </div>
             <ul id="historyList" class="history-list"></ul>
         </div>
     </div>
 
+    <!-- Rate Modal -->
+    <div id="rateModal" class="modal">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span style="font-weight:bold; font-size:1.2rem">سعر الصرف</span>
+                <span id="btnCloseRate" style="cursor:pointer; font-size:1.5rem">✕</span>
+            </div>
+            <div class="rate-group">
+                <input type="number" id="exchangeRate" value="89000" placeholder="ادخل السعر">
+            </div>
+            <button class="k-btn" style="width:100%; border-radius:12px; background:var(--orange-color); color:white; border:none;" id="btnSaveRate">حفظ</button>
+        </div>
+    </div>
+
     <script>
-        let currentInput = '';
-        let activeCurrency = 'LBP'; 
+        let appMode = 'calc'; 
+        let calcInput = '';
+        let activeCalcCurr = 'LBP'; 
+        
+        let scaleWeight = ''; let scalePrice = ''; let activeScaleInput = 'weight'; 
+        let ageDay = ''; let ageMonth = ''; let ageYear = ''; let activeAgeInput = 'day';
+        let diffStep = 1; let diffStart = null;
+        let speedVal = ''; let timeVal = ''; let activeSpeedInput = 'speed'; let timeUnit = 'sec';
+
         let historyData = [];
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -325,169 +427,439 @@
             o.start(); o.stop(audioCtx.currentTime + 0.05);
         }
 
-        window.onload = () => { loadState(); updateUI(); history.pushState(null,null,location.href); };
+        window.onload = () => { 
+            loadState(); 
+            resetTempData();
+            updateUI(); 
+            setupFastClicks();
+            history.pushState(null,null,location.href); 
+        };
 
-        function setActiveInput(curr) {
+        function resetTempData() {
+            appMode = 'calc';
+            calcInput = '';
+            scaleWeight = ''; scalePrice = '';
+            ageDay = ''; ageMonth = ''; ageYear = '';
+            diffStep = 1; diffStart = null;
+            speedVal = ''; timeVal = ''; timeUnit = 'sec';
+        }
+
+        function setupFastClicks() {
+            document.querySelectorAll('.k-btn').forEach(btn => {
+                btn.addEventListener('touchstart', (e) => { e.preventDefault(); btn.classList.add('pressed'); handleInput(btn); }, {passive: false});
+                btn.addEventListener('touchend', (e) => { e.preventDefault(); btn.classList.remove('pressed'); });
+                btn.addEventListener('mousedown', () => { btn.classList.add('pressed'); handleInput(btn); });
+                btn.addEventListener('mouseup', () => btn.classList.remove('pressed'));
+                btn.addEventListener('mouseleave', () => btn.classList.remove('pressed'));
+            });
+
+            // Header Icons
+            attachFastEvent('btnRate', openRate);
+            attachFastEvent('btnGrid', toggleTools);
+            attachFastEvent('btnHome', () => switchMode('calc'));
+
+            // Tools
+            attachFastEvent('toolAge', () => switchMode('age'));
+            attachFastEvent('toolDiff', () => switchMode('diff'));
+            attachFastEvent('toolScale', () => switchMode('scale'));
+            attachFastEvent('toolSpeed', () => switchMode('speed'));
+            attachFastEvent('toolHistory', openHistory); 
+
+            attachFastEvent('btnCloseHist', closeModals);
+            attachFastEvent('btnCloseRate', closeModals);
+            attachFastEvent('btnSaveRate', closeModals);
+            attachFastEvent('btnClearHistory', clearHistory);
+
+            attachFastEvent('btnBackspace', deleteChar);
+            attachFastEvent('box1', () => handleBoxClick(1));
+            attachFastEvent('box2', () => handleBoxClick(2));
+            attachFastEvent('box3', () => handleBoxClick(3));
+        }
+
+        function attachFastEvent(id, action) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            el.addEventListener('touchstart', (e) => { e.preventDefault(); action(); }, {passive: false});
+            el.addEventListener('click', action);
+        }
+
+        function handleBoxClick(boxNum) {
+            if(appMode === 'calc') {
+                if(boxNum === 1) activeCalcCurr = 'LBP';
+                if(boxNum === 2) activeCalcCurr = 'USD';
+            } else if (appMode === 'scale') {
+                if(boxNum === 1) activeScaleInput = 'weight';
+                if(boxNum === 2) activeScaleInput = 'price';
+            } else if (appMode === 'age' || appMode === 'diff') {
+                if(boxNum === 1) activeAgeInput = 'day';
+                if(boxNum === 2) activeAgeInput = 'month';
+                if(boxNum === 3) activeAgeInput = 'year';
+            } else if (appMode === 'speed') {
+                if(boxNum === 1) activeSpeedInput = 'speed';
+                if(boxNum === 2) {
+                    activeSpeedInput = 'time';
+                    toggleTimeUnit(); 
+                }
+            }
+            updateUI();
+        }
+
+        function toggleTimeUnit() {
+            if(timeUnit === 'sec') timeUnit = 'min';
+            else if(timeUnit === 'min') timeUnit = 'hour';
+            else timeUnit = 'sec';
+            updateUI();
+        }
+
+        function handleInput(btn) {
             playSound();
-            activeCurrency = curr;
-            document.getElementById('lbpBox').className = `curr-box ${curr==='LBP'?'active':''}`;
-            document.getElementById('usdBox').className = `curr-box ${curr==='USD'?'active':''}`;
+            const val = btn.getAttribute('data-val');
+            const action = btn.getAttribute('data-action');
+
+            if (val) {
+                if(['+', '-', '*', '/', '%'].includes(val)) {
+                    if (appMode === 'calc') appendOperator(val);
+                }
+                else appendNumber(val);
+            } else if (action) {
+                if(action === 'clear') clearAll();
+                else if(action === 'parens') { if (appMode === 'calc') appendParens(); }
+                else if(action === 'calc') calculate(true);
+            }
+        }
+
+        function toggleTools() {
+            const menu = document.getElementById('toolsMenu');
+            if (menu.style.display === 'grid') menu.style.display = 'none';
+            else menu.style.display = 'grid';
+        }
+
+        function switchMode(mode) {
+            appMode = mode;
+            calcInput = '';
+            scaleWeight = ''; scalePrice = '';
+            ageDay = ''; ageMonth = ''; ageYear = '';
+            diffStep = 1; diffStart = null;
+            speedVal = ''; timeVal = '';
+            
+            if(mode === 'scale') activeScaleInput = 'weight';
+            if(mode === 'age' || mode === 'diff') activeAgeInput = 'day';
+            if(mode === 'speed') activeSpeedInput = 'speed';
+            
+            document.getElementById('toolsMenu').style.display = 'none';
             updateUI();
         }
 
         function appendNumber(n) {
-            playSound();
-            if (currentInput === '0' && n !== '.') {
-                if(n === '00') currentInput = '0';
-                else currentInput = n;
+            let target = '';
+            if (appMode === 'calc') target = calcInput;
+            else if (appMode === 'scale') target = (activeScaleInput === 'weight') ? scaleWeight : scalePrice;
+            else if (appMode === 'speed') target = (activeSpeedInput === 'speed') ? speedVal : timeVal;
+            else if (appMode === 'age' || appMode === 'diff') {
+                if(activeAgeInput === 'day') target = ageDay;
+                else if(activeAgeInput === 'month') target = ageMonth;
+                else target = ageYear;
+            }
+
+            if (target === '0' && n !== '.' && !['+','-','*','/'].includes(n)) {
+                if(n === '00') target = '0'; else target = n;
             } else {
-                currentInput += n;
+                if(appMode === 'age' || appMode === 'diff') {
+                    if(n === '.') return;
+                    if(activeAgeInput === 'day' && target.length >= 2) return;
+                    if(activeAgeInput === 'month' && target.length >= 2) return;
+                    if(activeAgeInput === 'year' && target.length >= 4) return;
+                }
+                target += n;
+            }
+
+            if (appMode === 'calc') calcInput = target;
+            else if (appMode === 'scale') {
+                if(activeScaleInput === 'weight') scaleWeight = target; else scalePrice = target;
+            } else if (appMode === 'speed') {
+                if(activeSpeedInput === 'speed') speedVal = target; else timeVal = target;
+            } else if (appMode === 'age' || appMode === 'diff') {
+                if(activeAgeInput === 'day') ageDay = target;
+                else if(activeAgeInput === 'month') ageMonth = target;
+                else ageYear = target;
+                if(activeAgeInput === 'day' && ageDay.length === 2 && parseInt(ageDay) > 3) activeAgeInput = 'month';
+                if(activeAgeInput === 'month' && ageMonth.length === 2) activeAgeInput = 'year';
             }
             updateUI();
         }
 
         function appendOperator(op) {
-            playSound();
-            const last = currentInput.slice(-1);
-            if(['+','-','*','/','%','.'].includes(last)) currentInput = currentInput.slice(0,-1)+op;
-            else currentInput += op;
+            if (appMode !== 'calc') return;
+            const last = calcInput.slice(-1);
+            if(['+','-','*','/','%','.'].includes(last)) calcInput = calcInput.slice(0,-1)+op;
+            else calcInput += op;
             updateUI();
         }
 
         function appendParens() {
+            if (appMode !== 'calc') return;
+            const openCount = (calcInput.match(/\(/g) || []).length;
+            const closeCount = (calcInput.match(/\)/g) || []).length;
+            const last = calcInput.slice(-1);
+            if (openCount > closeCount && ['0','1','2','3','4','5','6','7','8','9',')'].includes(last)) calcInput += ')';
+            else if (['0','1','2','3','4','5','6','7','8','9'].includes(last)) calcInput += '*(';
+            else calcInput += '(';
+            updateUI();
+        }
+
+        function deleteChar() {
             playSound();
-            const openCount = (currentInput.match(/\(/g) || []).length;
-            const closeCount = (currentInput.match(/\)/g) || []).length;
-            const last = currentInput.slice(-1);
-            if (openCount > closeCount && ['0','1','2','3','4','5','6','7','8','9',')'].includes(last)) {
-                currentInput += ')';
-            } else {
-                if (['0','1','2','3','4','5','6','7','8','9'].includes(last)) currentInput += '*(';
-                else currentInput += '(';
+            if (appMode === 'calc') calcInput = calcInput.toString().slice(0,-1);
+            else if (appMode === 'scale') {
+                if (activeScaleInput === 'weight') scaleWeight = scaleWeight.toString().slice(0,-1);
+                else scalePrice = scalePrice.toString().slice(0,-1);
+            } else if (appMode === 'speed') {
+                if (activeSpeedInput === 'speed') speedVal = speedVal.toString().slice(0,-1);
+                else timeVal = timeVal.toString().slice(0,-1);
+            } else if (appMode === 'age' || appMode === 'diff') {
+                if (activeAgeInput === 'day') ageDay = ageDay.toString().slice(0,-1);
+                else if (activeAgeInput === 'month') ageMonth = ageMonth.toString().slice(0,-1);
+                else ageYear = ageYear.toString().slice(0,-1);
             }
             updateUI();
         }
 
-        function deleteChar() { playSound(); currentInput = currentInput.toString().slice(0,-1); updateUI(); }
-        function clearAll() { playSound(); currentInput = ''; updateUI(); }
+        function clearAll() {
+            playSound();
+            if (appMode === 'calc') calcInput = '';
+            else if (appMode === 'scale') { scaleWeight = ''; scalePrice = ''; }
+            else if (appMode === 'speed') { speedVal = ''; timeVal = ''; }
+            else if (appMode === 'age') { ageDay = ''; ageMonth = ''; ageYear = ''; activeAgeInput = 'day'; }
+            else if (appMode === 'diff') { ageDay = ''; ageMonth = ''; ageYear = ''; diffStep = 1; diffStart = null; activeAgeInput = 'day'; }
+            updateUI();
+        }
 
         function calculate(saveToHistory) {
-            if(saveToHistory) playSound();
-            if(!currentInput) return;
-            try {
-                let rawRes = eval(currentInput);
-                if(saveToHistory) addToHistory(currentInput, rawRes, activeCurrency);
-                saveState();
-            } catch (e) {}
+            if (appMode === 'calc') {
+                if(!calcInput) return;
+                try {
+                    let rawRes = eval(calcInput);
+                    if(saveToHistory) addToHistory(calcInput, rawRes, activeCalcCurr);
+                    saveState();
+                } catch (e) {}
+            } else if (appMode === 'diff' && diffStep === 1) {
+                if(!ageDay || !ageMonth || !ageYear) return;
+                diffStart = new Date(parseInt(ageYear), parseInt(ageMonth)-1, parseInt(ageDay));
+                ageDay = ''; ageMonth = ''; ageYear = ''; activeAgeInput = 'day';
+                diffStep = 2;
+                updateUI();
+            }
+        }
+
+        function calculateAgeLogic(targetDate) {
+            if(!ageDay || !ageMonth || !ageYear) return null;
+            if(ageYear.length < 4) return null;
+            const d = parseInt(ageDay); const m = parseInt(ageMonth); const y = parseInt(ageYear);
+            if(d>31 || m>12) return { error: 'التاريخ خطأ' };
+
+            const birthDate = new Date(y, m - 1, d);
+            const refDate = targetDate ? targetDate : new Date();
+            
+            let years = refDate.getFullYear() - birthDate.getFullYear();
+            let months = refDate.getMonth() - birthDate.getMonth();
+            let days = refDate.getDate() - birthDate.getDate();
+
+            if (days < 0) { months--; const prev = new Date(refDate.getFullYear(), refDate.getMonth(), 0); days += prev.getDate(); }
+            if (months < 0) { years--; months += 12; }
+
+            let nextB = null;
+            if(appMode === 'age') {
+                const today = new Date();
+                let next = new Date(today.getFullYear(), m - 1, d);
+                if (today > next) next.setFullYear(today.getFullYear() + 1);
+                const diffT = Math.abs(next - today);
+                nextB = Math.ceil(diffT / (1000 * 60 * 60 * 24)); 
+            }
+            return { years: Math.abs(years), months: Math.abs(months), days: Math.abs(days), nextBirthday: nextB };
         }
 
         function formatReadable(num) {
-            if (num === undefined || num === null) return '0';
+            if (num === undefined || num === null || isNaN(num)) return '0';
             let str = num.toLocaleString('en-US', { maximumFractionDigits: 12, useGrouping: false });
             let parts = str.split('.');
             parts[0] = Number(parts[0]).toLocaleString('en-US');
-            if (parts[1]) {
-                parts[1] = parts[1].match(/.{1,3}/g).join(',');
-            }
+            if (parts[1]) parts[1] = parts[1].match(/.{1,3}/g).join(',');
             return parts.join('.');
         }
 
         function updateUI() {
-            const rate = parseFloat(document.getElementById('exchangeRate').value) || 1;
+            const box1 = document.getElementById('box1'); const box2 = document.getElementById('box2'); const box3 = document.getElementById('box3');
+            const val1 = document.getElementById('val1'); const val2 = document.getElementById('val2'); const val3 = document.getElementById('val3');
+            const mainRes = document.getElementById('mainResult'); const subRes = document.getElementById('subResult');
+            const btnEqual = document.getElementById('btnEqual');
             
-            let visualEq = currentInput.replace(/\*/g,'×').replace(/\//g,'÷');
-            visualEq = visualEq.replace(/\d+/g, (n) => Number(n).toLocaleString('en-US'));
+            document.querySelectorAll('.tool-box').forEach(el => el.classList.remove('active'));
+            if(appMode !== 'calc') document.getElementById('tool' + appMode.charAt(0).toUpperCase() + appMode.slice(1)).classList.add('active');
+            
+            btnEqual.innerText = '='; btnEqual.style.background = '';
 
-            const lbpIn = document.getElementById('lbpInputDisplay');
-            const usdIn = document.getElementById('usdInputDisplay');
+            if (appMode === 'calc') {
+                box3.style.display = 'none'; 
+                document.getElementById('label1').innerText = "ليرة"; document.getElementById('label2').innerText = "دولار";
+                
+                box1.className = `curr-box ${activeCalcCurr==='LBP'?'active':''}`;
+                box2.className = `curr-box ${activeCalcCurr==='USD'?'active':''}`;
 
-            if(activeCurrency === 'LBP') {
-                lbpIn.innerText = visualEq || '0';
-                usdIn.innerText = '---';
-            } else {
-                usdIn.innerText = visualEq || '0';
-                lbpIn.innerText = '---';
+                let vEq = calcInput.replace(/\*/g,'×').replace(/\//g,'÷');
+                vEq = vEq.replace(/\d+/g, (n) => Number(n).toLocaleString('en-US'));
+
+                if(activeCalcCurr === 'LBP') { val1.innerText = vEq || '0'; val2.innerText = '---'; } 
+                else { val2.innerText = vEq || '0'; val1.innerText = '---'; }
+
+                const rate = parseFloat(document.getElementById('exchangeRate').value) || 1;
+                let res = 0; try { let c = calcInput; if(['+','-','*','/','%'].includes(c.slice(-1))) c=c.slice(0,-1); res = eval(c)||0; } catch{}
+
+                if(activeCalcCurr === 'LBP') {
+                    mainRes.innerText = formatReadable(res); 
+                    subRes.innerText = formatReadable(res / rate) + ' $';
+                } else {
+                    mainRes.innerText = formatReadable(res) + ' $';
+                    subRes.innerText = formatReadable(res * rate); 
+                }
+
+            } else if (appMode === 'scale') {
+                box3.style.display = 'none';
+                document.getElementById('label1').innerText = "الوزن (غ)"; document.getElementById('label2').innerText = "السعر (للكيلو)";
+                
+                box1.className = `curr-box ${activeScaleInput==='weight'?'active':''}`;
+                box2.className = `curr-box ${activeScaleInput==='price'?'active':''}`;
+
+                val1.innerText = scaleWeight ? formatReadable(parseFloat(scaleWeight)) : '0';
+                val2.innerText = scalePrice ? formatReadable(parseFloat(scalePrice)) : '0';
+
+                let w = parseFloat(scaleWeight) || 0; let p = parseFloat(scalePrice) || 0;
+                mainRes.innerText = formatReadable((w * p) / 1000);
+                subRes.innerText = "الإجمالي";
+
+            } else if (appMode === 'speed') {
+                box3.style.display = 'none';
+                document.getElementById('label1').innerText = "السرعة (كم/سا)"; 
+                let unitT = "ثانية"; if(timeUnit==='min') unitT="دقيقة"; if(timeUnit==='hour') unitT="ساعة";
+                document.getElementById('label2').innerText = "الوقت (" + unitT + ") 🔁";
+
+                box1.className = `curr-box ${activeSpeedInput==='speed'?'active':''}`;
+                box2.className = `curr-box ${activeSpeedInput==='time'?'active':''}`;
+
+                val1.innerText = speedVal ? formatReadable(parseFloat(speedVal)) : '0';
+                val2.innerText = timeVal ? formatReadable(parseFloat(timeVal)) : '0';
+
+                let s = parseFloat(speedVal) || 0; let t = parseFloat(timeVal) || 0;
+                let distKM = 0;
+                if(timeUnit === 'hour') distKM = s * t;
+                else if(timeUnit === 'min') distKM = s * (t / 60);
+                else distKM = s * (t / 3600);
+
+                mainRes.innerText = formatReadable(distKM) + ' كم';
+                subRes.innerText = formatReadable(distKM * 1000) + ' متر';
+
+            } else if (appMode === 'age' || appMode === 'diff') {
+                box3.style.display = 'block';
+                document.getElementById('label1').innerText = "اليوم"; document.getElementById('label2').innerText = "الشهر"; document.getElementById('label3').innerText = "السنة";
+                
+                if (appMode === 'diff') {
+                    subRes.innerText = diffStep === 1 ? "أدخل التاريخ الأول (1)" : "أدخل التاريخ الثاني (2)";
+                    btnEqual.innerText = diffStep === 1 ? "التالي" : "=";
+                    btnEqual.style.background = diffStep === 1 ? 'var(--btn-text-blue)' : ''; 
+                } else {
+                    subRes.innerText = "أدخل تاريخ ميلادك";
+                }
+
+                box1.className = `curr-box ${activeAgeInput==='day'?'active':''}`;
+                box2.className = `curr-box ${activeAgeInput==='month'?'active':''}`;
+                box3.className = `curr-box ${activeAgeInput==='year'?'active':''}`;
+
+                val1.innerText = ageDay || 'DD'; val2.innerText = ageMonth || 'MM'; val3.innerText = ageYear || 'YYYY';
+
+                mainRes.innerText = '';
+                
+                let dateRes = null;
+                if(appMode === 'age') dateRes = calculateAgeLogic(null);
+                else if (appMode === 'diff' && diffStep === 2) {
+                    if(diffStart && ageDay && ageMonth && ageYear.length===4) {
+                         const d2 = new Date(parseInt(ageYear), parseInt(ageMonth)-1, parseInt(ageDay));
+                         let t1 = diffStart.getTime(); let t2 = d2.getTime();
+                         let start = (t1 < t2) ? diffStart : d2; let end = (t1 < t2) ? d2 : diffStart;
+                         let y = end.getFullYear() - start.getFullYear();
+                         let m = end.getMonth() - start.getMonth();
+                         let d = end.getDate() - start.getDate();
+                         if (d < 0) { m--; let pm = new Date(end.getFullYear(), end.getMonth(), 0); d += pm.getDate(); }
+                         if (m < 0) { y--; m += 12; }
+                         dateRes = { years: y, months: m, days: d };
+                    }
+                }
+
+                if (dateRes && !dateRes.error) {
+                    mainRes.innerHTML = `
+                        <div class="age-result-container">
+                            <div class="age-box-res"><span class="age-num">${dateRes.years}</span><span class="age-txt">سنة</span></div>
+                            <div class="age-box-res"><span class="age-num">${dateRes.months}</span><span class="age-txt">شهر</span></div>
+                            <div class="age-box-res"><span class="age-num">${dateRes.days}</span><span class="age-txt">يوم</span></div>
+                        </div>`;
+                    if(appMode === 'age') subRes.innerText = `عيد ميلادك القادم بعد: ${dateRes.nextBirthday} يوم 🎂`;
+                    else subRes.innerText = "الفرق الزمني";
+                } else if (dateRes && dateRes.error) {
+                    mainRes.innerText = dateRes.error;
+                } else {
+                    mainRes.innerText = '...';
+                }
             }
-
-            let resultVal = 0;
-            try {
-                let clean = currentInput;
-                if(['+','-','*','/','%','('].includes(clean.slice(-1))) clean = clean.slice(0,-1);
-                resultVal = clean ? eval(clean) : 0;
-            } catch { resultVal = 0; }
-
-            const mainRes = document.getElementById('mainResult');
-            const subRes = document.getElementById('subResult');
-
-            if(activeCurrency === 'LBP') {
-                mainRes.innerText = formatReadable(resultVal); // حذف كلمة ليرة هنا
-                subRes.innerText = formatReadable(resultVal / rate) + ' $';
-            } else {
-                mainRes.innerText = formatReadable(resultVal) + ' $';
-                subRes.innerText = formatReadable(resultVal * rate); // حذف كلمة ليرة هنا
-            }
+            
             saveState();
         }
 
+        function openHistory() { 
+            // Close tools menu if open
+            document.getElementById('toolsMenu').style.display = 'none';
+            renderHistory(); 
+            document.getElementById('historyModal').classList.add('show'); 
+            history.pushState({modal:true},null,location.href); 
+        }
+        function openRate() { document.getElementById('rateModal').classList.add('show'); history.pushState({modal:true},null,location.href); }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('show')); }
+        function clearHistory() { historyData=[]; saveState(); renderHistory(); }
+
         function addToHistory(eq, res, curr) {
             const time = new Date().toLocaleTimeString('ar-LB',{hour:'2-digit',minute:'2-digit'});
-            const item = { eq, res, curr, time };
-            historyData.unshift(item);
+            historyData.unshift({ eq, res, curr, time });
             if(historyData.length > 30) historyData.pop();
-            renderHistory();
         }
-
         function renderHistory() {
-            const list = document.getElementById('historyList');
-            list.innerHTML = '';
+            const list = document.getElementById('historyList'); list.innerHTML = '';
+            if (appMode !== 'calc') { list.innerHTML = '<li style="text-align:center; padding:10px; color:#999">السجل متاح للآلة الحاسبة فقط</li>'; return; }
             historyData.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'history-item';
+                const li = document.createElement('li'); li.className = 'history-item';
                 let vEq = item.eq.replace(/\*/g,'×').replace(/\//g,'÷');
-                const sym = item.curr==='LBP'?'':'$'; // تم إزالة كلمة ليرة من السجل أيضاً للتناسق
-                li.innerHTML = `
-                    <div style="font-size:0.8rem; direction:ltr">${vEq}</div>
-                    <div style="font-weight:bold; color:#2962ff; direction:ltr">= ${formatReadable(item.res)} ${sym}</div>
-                `;
-                li.onclick = () => {
-                    currentInput = item.eq; 
-                    setActiveInput(item.curr);
-                    closeMenu();
-                };
+                li.innerHTML = `<div style="font-size:0.8rem; direction:ltr">${vEq}</div><div style="font-weight:bold; color:var(--btn-text-blue); direction:ltr">= ${formatReadable(item.res)} ${item.curr==='LBP'?'': '$'}</div>`;
+                li.onclick = () => { calcInput = item.eq; if(appMode==='calc') activeCalcCurr = item.curr; closeModals(); updateUI(); };
                 list.appendChild(li);
             });
         }
 
-        function openMenu() { renderHistory(); document.getElementById('menuModal').classList.add('show'); history.pushState({modal:true},null,location.href); }
-        function closeMenu() { document.getElementById('menuModal').classList.remove('show'); }
-        function clearHistory() { historyData=[]; saveState(); renderHistory(); }
-
         function saveState() {
-            localStorage.setItem('z_rate', document.getElementById('exchangeRate').value);
-            localStorage.setItem('z_in', currentInput);
-            localStorage.setItem('z_curr', activeCurrency);
-            localStorage.setItem('z_hist', JSON.stringify(historyData));
+            localStorage.setItem('rate', document.getElementById('exchangeRate').value);
+            localStorage.setItem('hist', JSON.stringify(historyData));
         }
         function loadState() {
-            if(localStorage.getItem('z_rate')) document.getElementById('exchangeRate').value = localStorage.getItem('z_rate');
-            if(localStorage.getItem('z_in')) currentInput = localStorage.getItem('z_in');
-            if(localStorage.getItem('z_curr')) setActiveInput(localStorage.getItem('z_curr'));
-            if(localStorage.getItem('z_hist')) historyData = JSON.parse(localStorage.getItem('z_hist'));
+            if(localStorage.getItem('rate')) document.getElementById('exchangeRate').value = localStorage.getItem('rate');
+            if(localStorage.getItem('hist')) historyData = JSON.parse(localStorage.getItem('hist'));
         }
 
         window.addEventListener('popstate', ()=>{
             history.pushState(null,null,location.href);
-            if(document.getElementById('menuModal').classList.contains('show')) closeMenu();
-            else if(currentInput.length>0) deleteChar();
+            if(document.querySelector('.modal.show')) { closeModals(); return; }
+            if(document.getElementById('toolsMenu').style.display === 'grid') { toggleTools(); return; }
+            if(appMode !== 'calc') { switchMode('calc'); return; }
+            if(calcInput.length > 0) deleteChar();
         });
-        document.getElementById('exchangeRate').addEventListener('input', () => { updateUI(); saveState(); });
-        document.querySelectorAll('button').forEach(b=>{
-            b.addEventListener('touchstart',function(){this.style.backgroundColor='#eee'});
-            b.addEventListener('touchend',function(){this.style.backgroundColor='var(--btn-bg)'});
-        });
-        document.querySelector('.bg-blue').addEventListener('touchstart',function(){this.style.backgroundColor='#2c4296'});
-        document.querySelector('.bg-blue').addEventListener('touchend',function(){this.style.backgroundColor='var(--btn-bg-equal)'});
 
+        document.getElementById('exchangeRate').addEventListener('input', () => { updateUI(); saveState(); });
+        document.getElementById('btnSaveRate').addEventListener('click', closeModals);
+        
     </script>
 </body>
 </html>
