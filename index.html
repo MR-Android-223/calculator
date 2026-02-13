@@ -2,9 +2,10 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>الحاسبة الاحترافية</title>
     <style>
+        /* نفس التنسيق تماماً */
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
 
         :root {
@@ -14,12 +15,11 @@
             --blue-color: #2962ff;
             --gray-icon: #9e9e9e;
             --gray-light: #f5f6fa;
-            --grid-line: #f2f2f2; /* لون خطوط الجدول الفاتحة */
+            --grid-line: #f2f2f2;
         }
 
         * {
             box-sizing: border-box;
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
             font-family: 'Tajawal', sans-serif;
             touch-action: manipulation;
@@ -32,6 +32,8 @@
             background-color: var(--bg-color);
             overflow: hidden;
             color: var(--text-color);
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .app-container {
@@ -43,22 +45,23 @@
             position: relative;
         }
 
-        /* --- 1. Header --- */
+        /* --- Header --- */
         .top-header {
             background-color: #ffffff;
-            height: 70px;
+            height: 70px; 
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 0 25px;
+            padding-top: 15px; 
             flex-shrink: 0;
             direction: ltr; 
             z-index: 100;
         }
 
         .nav-icon {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -66,9 +69,9 @@
             transition: transform 0.1s;
         }
         .nav-icon:active { transform: scale(0.9); }
-        .nav-icon svg { width: 32px; height: 32px; }
+        .nav-icon svg { width: 28px; height: 28px; }
 
-        /* --- 2. Tools Menu --- */
+        /* --- Tools Menu --- */
         .tools-bar {
             background: #ffffff;
             padding: 15px;
@@ -77,7 +80,7 @@
             gap: 10px;
             border-bottom: 1px solid #f0f0f0;
             position: absolute;
-            top: 70px;
+            top: 70px; 
             width: 100%;
             z-index: 99;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
@@ -95,64 +98,123 @@
             cursor: pointer;
             height: 80px;
             border: 2px solid transparent;
+            user-select: none;
         }
         .tool-box.active { border-color: var(--blue-color); background: #e3f2fd; }
         .tool-icon-img { font-size: 1.8rem; margin-bottom: 5px; }
         .tool-name { font-size: 0.75rem; font-weight: bold; color: #555; text-align: center;}
 
-        /* --- 3. Display --- */
+        /* --- Display Area --- */
         .display-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            padding: 10px 25px;
+            padding: 5px 25px 10px 25px;
             background: #ffffff;
             overflow: hidden;
+            min-height: 0;
         }
 
         .result-line {
             text-align: right;
-            margin-bottom: 15px;
-            min-height: 90px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-end; 
+            max-height: 25%;
+            overflow: visible;
         }
         
-        .main-res { font-size: 2.4rem; font-weight: 800; color: #2d3436; direction: ltr; word-wrap: break-word; line-height: 1.1;}
-        .sub-res { font-size: 1.1rem; color: #b2bec3; direction: ltr; margin-top: 5px; font-weight: 500;}
+        .main-res { 
+            font-size: 2.4rem; 
+            font-weight: 800; 
+            color: #2d3436; 
+            direction: ltr; 
+            word-wrap: break-word; 
+            line-height: 1.2; 
+            transition: font-size 0.2s ease;
+        }
+        .sub-res { 
+            font-size: 1.3rem; 
+            color: #b2bec3; 
+            direction: ltr; 
+            margin-top: 2px; 
+            font-weight: 500;
+            transition: font-size 0.2s ease;
+            word-wrap: break-word; 
+            line-height: 1.1;
+        }
 
-        /* --- تعديل المربعات (إطار كامل) --- */
+        .result-line.final-state .main-res { color: var(--blue-color); }
+        .result-line.final-state .sub-res { color: #636e72; font-weight: 700; }
+
         .inputs-wrapper {
             display: flex;
             gap: 15px;
             margin-top: 5px;
             direction: rtl; 
+            flex-shrink: 0; 
         }
+
         .curr-box {
             flex: 1;
             padding: 8px 12px;
-            /* تم التعديل: إطار شفاف يحيط بكل الجهات */
             border: 2px solid transparent; 
             background: var(--gray-light);
             border-radius: 12px;
             text-align: right;
             transition: all 0.3s;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 70px;
+            justify-content: center;
         }
         .curr-box.active { 
-            /* تم التعديل: تلوين الإطار بالكامل */
             border-color: var(--blue-color); 
             background: #fff; 
             box-shadow: 0 4px 15px rgba(41, 98, 255, 0.1); 
         }
-        .curr-label { font-size: 0.75rem; color: #636e72; font-weight: bold; margin-bottom: 2px;}
-        .curr-val { font-size: 1.3rem; font-weight: 700; direction: ltr; overflow: hidden; white-space: nowrap; color: #2d3436;}
 
-        /* --- 4. Keypad with Grid Lines --- */
+        .currency-toggle-btn {
+            font-size: 0.85rem;
+            color: var(--blue-color);
+            font-weight: 800;
+            margin-bottom: 5px;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            background: rgba(41, 98, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        .currency-toggle-btn:active { transform: scale(0.95); }
+
+        .curr-label { font-size: 0.75rem; color: #636e72; font-weight: bold; margin-bottom: 2px; user-select: none;}
+
+        .curr-val-input {
+            font-size: 1.7rem; 
+            font-weight: 700; 
+            direction: ltr; 
+            color: #2d3436;
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            font-family: 'Tajawal', sans-serif;
+            padding: 0;
+            margin: 0;
+            caret-color: var(--blue-color);
+            letter-spacing: 0.5px;
+        }
+        .curr-val-input::placeholder { color: #ccc; }
+
+        /* --- Keypad --- */
         .middle-toolbar {
-            height: 40px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -160,7 +222,7 @@
             background: #ffffff;
             flex-shrink: 0;
             direction: ltr; 
-            border-bottom: 1px solid var(--grid-line); /* خط فاصل خفيف */
+            border-bottom: 1px solid var(--grid-line);
         }
 
         .backspace-btn {
@@ -168,6 +230,7 @@
             font-size: 1.5rem;
             cursor: pointer;
             padding: 5px;
+            user-select: none;
         }
 
         .keypad {
@@ -175,21 +238,18 @@
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(5, 1fr);
             background-color: #ffffff;
-            height: 52%; 
-            max-height: 420px;
+            height: 55%; 
             flex-shrink: 0;
             direction: ltr; 
-            /* لا يوجد مسافات هنا، سنستخدم البوردر للتقسيم */
+            padding-bottom: 5px;
         }
 
         .k-btn {
             background: #ffffff;
             border: none;
-            /* --- إضافة خطوط الشبكة الفاتحة --- */
             border-right: 1px solid var(--grid-line);
             border-top: 1px solid var(--grid-line);
-            
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             color: #2d3436;
             display: flex;
             justify-content: center;
@@ -197,38 +257,25 @@
             cursor: pointer;
             outline: none;
             transition: background 0.1s;
+            user-select: none;
         }
-        
-        /* إزالة الخطوط من الحواف الخارجية لجمالية أكثر */
-        .k-btn:nth-child(4n) { border-right: none; } /* آخر عمود بلا خط يمين */
-
+        .k-btn:nth-child(4n) { border-right: none; }
         .k-btn.pressed { background-color: #f7f7f7; }
         
-        .txt-blue { color: var(--blue-color); font-weight: 500; font-size: 1.5rem;}
+        .txt-blue { color: var(--blue-color); font-weight: 500; font-size: 1.6rem;}
         .bg-blue { 
             background-color: var(--orange-color) !important; 
             color: white; 
-            font-size: 2rem; 
-            border-radius: 12px; /* جعل زر اليساوي مميز قليلاً */
-            margin: 5px; /* تصغيره قليلاً ليفصل عن الخطوط */
+            font-size: 2.2rem; 
+            border-radius: 12px;
+            margin: 5px; 
             height: auto;
-            border: none; /* إزالة خطوط الشبكة عن زر اليساوي */
+            border: none;
             box-shadow: 0 4px 10px rgba(255, 159, 67, 0.3);
         }
         .bg-blue.pressed { transform: scale(0.95); opacity: 0.9; }
 
-        /* Age Result Style */
-        .age-result-container {
-            display: flex; gap: 8px; justify-content: center; width: 100%; direction: rtl;
-        }
-        .age-box-res {
-            background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
-            padding: 5px; text-align: center; flex: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        .age-num { font-size: 1.3rem; font-weight: 800; color: var(--blue-color); display: block;}
-        .age-txt { font-size: 0.75rem; color: #888; }
-
-        /* Modal */
+        /* Modals */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 2000;
@@ -254,23 +301,27 @@
             display: flex; justify-content: space-between; align-items: center;
         }
 
+        .age-result-container {
+            display: flex; gap: 8px; justify-content: center; width: 100%; direction: rtl;
+        }
+        .age-box-res {
+            background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+            padding: 5px; text-align: center; flex: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .age-num { font-size: 1.3rem; font-weight: 800; color: var(--blue-color); display: block;}
+        .age-txt { font-size: 0.75rem; color: #888; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        
-        <!-- Header -->
         <div class="top-header">
-            <!-- Rate Icon -->
             <div class="nav-icon" id="btnRate">
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-icon)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9.5L12 3l9 6.5v10.5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2z"></path>
                     <text x="12" y="18" text-anchor="middle" font-size="12" fill="var(--gray-icon)" stroke="none" font-weight="bold">$</text>
                 </svg>
             </div>
-
-            <!-- Grid Icon -->
             <div class="nav-icon" id="btnGrid">
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-icon)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="3" width="7" height="7" rx="2"></rect>
@@ -280,8 +331,6 @@
                     <line x1="14" y1="19" x2="21" y2="19"></line>
                 </svg>
             </div>
-
-            <!-- Home Icon -->
             <div class="nav-icon" id="btnHome">
                 <svg viewBox="0 0 24 24" fill="none">
                     <rect x="0" y="0" width="24" height="24" rx="8" fill="#ff7f30"></rect>
@@ -291,7 +340,6 @@
             </div>
         </div>
 
-        <!-- Tools Menu -->
         <div class="tools-bar" id="toolsMenu">
             <div class="tool-box" id="toolAge">
                 <span class="tool-icon-img">🎂</span>
@@ -315,36 +363,34 @@
             </div>
         </div>
 
-        <!-- Display Area -->
         <div class="display-area">
-            <div class="result-line">
+            <div class="result-line" id="resultContainer">
                 <div class="main-res" id="mainResult">0</div>
                 <div class="sub-res" id="subResult"></div>
             </div>
 
             <div class="inputs-wrapper" id="inputsContainer">
                 <div class="curr-box active" id="box1">
-                    <div class="curr-label" id="label1">ليرة</div>
-                    <div class="curr-val" id="val1"></div>
+                    <div class="currency-toggle-btn" id="currencyToggleBtn">ليرة</div>
+                    <div class="curr-label" id="label1" style="display:none">القيمة</div>
+                    <input type="text" class="curr-val-input" id="val1" inputmode="none" placeholder="0">
                 </div>
-                <div class="curr-box" id="box2">
-                    <div class="curr-label" id="label2">دولار</div>
-                    <div class="curr-val" id="val2"></div>
+                <div class="curr-box" id="box2" style="display:none">
+                    <div class="curr-label" id="label2">---</div>
+                    <input type="text" class="curr-val-input" id="val2" inputmode="none" placeholder="0">
                 </div>
                 <div class="curr-box" id="box3" style="display:none">
                     <div class="curr-label" id="label3">سنة</div>
-                    <div class="curr-val" id="val3"></div>
+                    <input type="text" class="curr-val-input" id="val3" inputmode="none" placeholder="0000">
                 </div>
             </div>
         </div>
 
-        <!-- Middle Toolbar -->
         <div class="middle-toolbar">
             <div></div> 
             <div class="backspace-btn" id="btnBackspace">⌫</div>
         </div>
 
-        <!-- Keypad with Grid Lines -->
         <div class="keypad">
             <button class="k-btn txt-blue" data-action="clear">C</button>
             <button class="k-btn txt-blue" data-action="parens">()</button>
@@ -374,7 +420,6 @@
 
     </div>
 
-    <!-- History Modal -->
     <div id="historyModal" class="modal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
@@ -388,7 +433,6 @@
         </div>
     </div>
 
-    <!-- Rate Modal -->
     <div id="rateModal" class="modal">
         <div class="modal-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
@@ -403,18 +447,29 @@
     </div>
 
     <script>
+        /**
+         * PROFESSIONAL CALCULATOR ENGINE
+         * UPDATED: Fixed Implicit Multiplication after % (e.g. 400000%83 -> 400000%*83)
+         */
+
         let appMode = 'calc'; 
-        let calcInput = '';
+        let activeInputId = 'val1'; 
         let activeCalcCurr = 'LBP'; 
+
+        // Calculation State
+        let diffStep = 1; 
+        let diffStart = null;
+        let timeUnit = 'sec';
+        let isFinalState = false;
         
-        let scaleWeight = ''; let scalePrice = ''; let activeScaleInput = 'weight'; 
-        let ageDay = ''; let ageMonth = ''; let ageYear = ''; let activeAgeInput = 'day';
-        let diffStep = 1; let diffStart = null;
-        let speedVal = ''; let timeVal = ''; let activeSpeedInput = 'speed'; let timeUnit = 'sec';
+        // Repeated Equals Logic
+        let lastRepeatedOp = null;
+        let lastResultValue = 0;
 
         let historyData = [];
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+        // --- Sound & Initialization ---
         function playSound() {
             if(audioCtx.state === 'suspended') audioCtx.resume();
             const o = audioCtx.createOscillator();
@@ -430,366 +485,395 @@
         window.onload = () => { 
             loadState(); 
             resetTempData();
-            updateUI(); 
             setupFastClicks();
-            history.pushState(null,null,location.href); 
+            document.querySelectorAll('.curr-val-input').forEach(inp => {
+                inp.addEventListener('click', () => setActiveInput(inp.id));
+            });
+            updateUI(false); 
         };
 
         function resetTempData() {
             appMode = 'calc';
-            calcInput = '';
-            scaleWeight = ''; scalePrice = '';
-            ageDay = ''; ageMonth = ''; ageYear = '';
             diffStep = 1; diffStart = null;
-            speedVal = ''; timeVal = ''; timeUnit = 'sec';
+            timeUnit = 'sec';
+            isFinalState = false;
+            lastRepeatedOp = null;
+        }
+
+        // --- Core Input Logic ---
+        function setActiveInput(id) {
+            activeInputId = id;
+            document.querySelectorAll('.curr-box').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).parentElement.classList.add('active');
         }
 
         function setupFastClicks() {
             document.querySelectorAll('.k-btn').forEach(btn => {
                 btn.addEventListener('touchstart', (e) => { e.preventDefault(); btn.classList.add('pressed'); handleInput(btn); }, {passive: false});
                 btn.addEventListener('touchend', (e) => { e.preventDefault(); btn.classList.remove('pressed'); });
-                btn.addEventListener('mousedown', () => { btn.classList.add('pressed'); handleInput(btn); });
+                btn.addEventListener('mousedown', (e) => { e.preventDefault(); btn.classList.add('pressed'); handleInput(btn); }); 
                 btn.addEventListener('mouseup', () => btn.classList.remove('pressed'));
                 btn.addEventListener('mouseleave', () => btn.classList.remove('pressed'));
             });
 
-            // Header Icons
-            attachFastEvent('btnRate', openRate);
-            attachFastEvent('btnGrid', toggleTools);
-            attachFastEvent('btnHome', () => switchMode('calc'));
-
-            // Tools
-            attachFastEvent('toolAge', () => switchMode('age'));
-            attachFastEvent('toolDiff', () => switchMode('diff'));
-            attachFastEvent('toolScale', () => switchMode('scale'));
-            attachFastEvent('toolSpeed', () => switchMode('speed'));
-            attachFastEvent('toolHistory', openHistory); 
-
-            attachFastEvent('btnCloseHist', closeModals);
-            attachFastEvent('btnCloseRate', closeModals);
-            attachFastEvent('btnSaveRate', closeModals);
-            attachFastEvent('btnClearHistory', clearHistory);
-
-            attachFastEvent('btnBackspace', deleteChar);
-            attachFastEvent('box1', () => handleBoxClick(1));
-            attachFastEvent('box2', () => handleBoxClick(2));
-            attachFastEvent('box3', () => handleBoxClick(3));
-        }
-
-        function attachFastEvent(id, action) {
-            const el = document.getElementById(id);
-            if(!el) return;
-            el.addEventListener('touchstart', (e) => { e.preventDefault(); action(); }, {passive: false});
-            el.addEventListener('click', action);
-        }
-
-        function handleBoxClick(boxNum) {
-            if(appMode === 'calc') {
-                if(boxNum === 1) activeCalcCurr = 'LBP';
-                if(boxNum === 2) activeCalcCurr = 'USD';
-            } else if (appMode === 'scale') {
-                if(boxNum === 1) activeScaleInput = 'weight';
-                if(boxNum === 2) activeScaleInput = 'price';
-            } else if (appMode === 'age' || appMode === 'diff') {
-                if(boxNum === 1) activeAgeInput = 'day';
-                if(boxNum === 2) activeAgeInput = 'month';
-                if(boxNum === 3) activeAgeInput = 'year';
-            } else if (appMode === 'speed') {
-                if(boxNum === 1) activeSpeedInput = 'speed';
-                if(boxNum === 2) {
-                    activeSpeedInput = 'time';
-                    toggleTimeUnit(); 
+            // Fast Events Helpers
+            const bind = (id, fn) => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); fn(); }, {passive: false});
+                    el.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
                 }
+            };
+
+            bind('btnRate', openRate);
+            bind('btnGrid', toggleTools);
+            bind('btnHome', () => switchMode('calc'));
+            bind('toolAge', () => switchMode('age'));
+            bind('toolDiff', () => switchMode('diff'));
+            bind('toolScale', () => switchMode('scale'));
+            bind('toolSpeed', () => switchMode('speed'));
+            bind('toolHistory', openHistory); 
+            bind('btnCloseHist', closeModals);
+            bind('btnCloseRate', closeModals);
+            bind('btnSaveRate', closeModals);
+            bind('btnClearHistory', clearHistory);
+            bind('btnBackspace', deleteChar);
+            bind('currencyToggleBtn', toggleCurrency);
+
+            document.getElementById('box1').onclick = () => { setActiveInput('val1'); document.getElementById('val1').focus(); };
+            document.getElementById('box2').onclick = () => { setActiveInput('val2'); document.getElementById('val2').focus(); };
+            document.getElementById('box3').onclick = () => { setActiveInput('val3'); document.getElementById('val3').focus(); };
+            document.getElementById('label2').onclick = () => { if(appMode === 'speed') toggleTimeUnit(); };
+        }
+
+        function toggleCurrency() {
+            if(appMode !== 'calc') return;
+            const btn = document.getElementById('currencyToggleBtn');
+            if(activeCalcCurr === 'LBP') {
+                activeCalcCurr = 'USD';
+                btn.innerText = 'دولار ($)';
+            } else {
+                activeCalcCurr = 'LBP';
+                btn.innerText = 'ليرة (L.L)';
             }
-            updateUI();
+            calculate(false);
         }
 
         function toggleTimeUnit() {
-            if(timeUnit === 'sec') timeUnit = 'min';
-            else if(timeUnit === 'min') timeUnit = 'hour';
-            else timeUnit = 'sec';
+            timeUnit = (timeUnit === 'sec') ? 'min' : (timeUnit === 'min') ? 'hour' : 'sec';
             updateUI();
         }
 
+        // --- Input Handling ---
         function handleInput(btn) {
             playSound();
             const val = btn.getAttribute('data-val');
             const action = btn.getAttribute('data-action');
-
-            if (val) {
-                if(['+', '-', '*', '/', '%'].includes(val)) {
-                    if (appMode === 'calc') appendOperator(val);
+            
+            if(isFinalState) {
+                if (val && !['+','-','*','/','%'].includes(val)) {
+                    clearAll(false);
+                } else if (['+','-','*','/','%'].includes(val)) {
+                    document.getElementById('val1').value = formatString(lastResultValue.toString());
+                    isFinalState = false;
+                    document.getElementById('resultContainer').classList.remove('final-state');
+                } else {
+                    isFinalState = false;
+                    document.getElementById('resultContainer').classList.remove('final-state');
                 }
-                else appendNumber(val);
-            } else if (action) {
+            }
+
+            if (val) insertChar(val);
+            else if (action) {
                 if(action === 'clear') clearAll();
-                else if(action === 'parens') { if (appMode === 'calc') appendParens(); }
+                else if(action === 'parens') { if (appMode === 'calc') insertParens(); }
                 else if(action === 'calc') calculate(true);
             }
         }
 
-        function toggleTools() {
-            const menu = document.getElementById('toolsMenu');
-            if (menu.style.display === 'grid') menu.style.display = 'none';
-            else menu.style.display = 'grid';
+        function cleanString(str) {
+            if(!str) return '';
+            return str.replace(/,/g, '').replace(/×/g, '*').replace(/÷/g, '/');
         }
 
-        function switchMode(mode) {
-            appMode = mode;
-            calcInput = '';
-            scaleWeight = ''; scalePrice = '';
-            ageDay = ''; ageMonth = ''; ageYear = '';
-            diffStep = 1; diffStart = null;
-            speedVal = ''; timeVal = '';
+        function formatString(str) {
+            if(!str) return '';
+            let visual = str.replace(/\*/g, '×').replace(/\//g, '÷');
+            return visual.replace(/(\d+)(\.\d*)?/g, (match, p1, p2) => {
+                return p1.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (p2 || "");
+            });
+        }
+
+        function insertChar(char) {
+            const input = document.getElementById(activeInputId);
+            if(!input) return;
+
+            let val = input.value;
+            let rawVal = cleanString(val);
+            const operators = ['+','-','*','/','%'];
+            const lastChar = rawVal.slice(-1);
+
+            // 1. Operator replacement logic
+            if (operators.includes(char) && operators.includes(lastChar) && appMode === 'calc') {
+                val = val.slice(0, -1); 
+            }
+
+            // 2. Decimal logic
+            if (char === '.') {
+                const parts = rawVal.split(/[\+\-\*\/\%]/);
+                const currentNumber = parts[parts.length - 1];
+                if (currentNumber.includes('.')) return; 
+                if (currentNumber === '') char = '0.'; 
+            }
+
+            // 3. IMPLICIT MULTIPLICATION AFTER % (Fix for User)
+            // If previous char was %, and user types a number, insert * automatically
+            if (lastChar === '%' && !operators.includes(char) && char !== '.') {
+                char = '*' + char;
+            }
+
+            let newRaw = cleanString(val) + char;
+            input.value = (appMode === 'calc' || appMode === 'scale') ? formatString(newRaw) : newRaw;
             
-            if(mode === 'scale') activeScaleInput = 'weight';
-            if(mode === 'age' || mode === 'diff') activeAgeInput = 'day';
-            if(mode === 'speed') activeSpeedInput = 'speed';
-            
-            document.getElementById('toolsMenu').style.display = 'none';
-            updateUI();
+            if(appMode === 'calc') calculate(false);
+            else updateUI(true);
         }
 
-        function appendNumber(n) {
-            let target = '';
-            if (appMode === 'calc') target = calcInput;
-            else if (appMode === 'scale') target = (activeScaleInput === 'weight') ? scaleWeight : scalePrice;
-            else if (appMode === 'speed') target = (activeSpeedInput === 'speed') ? speedVal : timeVal;
-            else if (appMode === 'age' || appMode === 'diff') {
-                if(activeAgeInput === 'day') target = ageDay;
-                else if(activeAgeInput === 'month') target = ageMonth;
-                else target = ageYear;
-            }
-
-            if (target === '0' && n !== '.' && !['+','-','*','/'].includes(n)) {
-                if(n === '00') target = '0'; else target = n;
-            } else {
-                if(appMode === 'age' || appMode === 'diff') {
-                    if(n === '.') return;
-                    if(activeAgeInput === 'day' && target.length >= 2) return;
-                    if(activeAgeInput === 'month' && target.length >= 2) return;
-                    if(activeAgeInput === 'year' && target.length >= 4) return;
-                }
-                target += n;
-            }
-
-            if (appMode === 'calc') calcInput = target;
-            else if (appMode === 'scale') {
-                if(activeScaleInput === 'weight') scaleWeight = target; else scalePrice = target;
-            } else if (appMode === 'speed') {
-                if(activeSpeedInput === 'speed') speedVal = target; else timeVal = target;
-            } else if (appMode === 'age' || appMode === 'diff') {
-                if(activeAgeInput === 'day') ageDay = target;
-                else if(activeAgeInput === 'month') ageMonth = target;
-                else ageYear = target;
-                if(activeAgeInput === 'day' && ageDay.length === 2 && parseInt(ageDay) > 3) activeAgeInput = 'month';
-                if(activeAgeInput === 'month' && ageMonth.length === 2) activeAgeInput = 'year';
-            }
-            updateUI();
-        }
-
-        function appendOperator(op) {
-            if (appMode !== 'calc') return;
-            const last = calcInput.slice(-1);
-            if(['+','-','*','/','%','.'].includes(last)) calcInput = calcInput.slice(0,-1)+op;
-            else calcInput += op;
-            updateUI();
-        }
-
-        function appendParens() {
-            if (appMode !== 'calc') return;
-            const openCount = (calcInput.match(/\(/g) || []).length;
-            const closeCount = (calcInput.match(/\)/g) || []).length;
-            const last = calcInput.slice(-1);
-            if (openCount > closeCount && ['0','1','2','3','4','5','6','7','8','9',')'].includes(last)) calcInput += ')';
-            else if (['0','1','2','3','4','5','6','7','8','9'].includes(last)) calcInput += '*(';
-            else calcInput += '(';
-            updateUI();
+        function insertParens() {
+            insertChar('('); 
         }
 
         function deleteChar() {
             playSound();
-            if (appMode === 'calc') calcInput = calcInput.toString().slice(0,-1);
-            else if (appMode === 'scale') {
-                if (activeScaleInput === 'weight') scaleWeight = scaleWeight.toString().slice(0,-1);
-                else scalePrice = scalePrice.toString().slice(0,-1);
-            } else if (appMode === 'speed') {
-                if (activeSpeedInput === 'speed') speedVal = speedVal.toString().slice(0,-1);
-                else timeVal = timeVal.toString().slice(0,-1);
-            } else if (appMode === 'age' || appMode === 'diff') {
-                if (activeAgeInput === 'day') ageDay = ageDay.toString().slice(0,-1);
-                else if (activeAgeInput === 'month') ageMonth = ageMonth.toString().slice(0,-1);
-                else ageYear = ageYear.toString().slice(0,-1);
+            const input = document.getElementById(activeInputId);
+            let val = input.value;
+            if(isFinalState) {
+                isFinalState = false;
+                document.getElementById('resultContainer').classList.remove('final-state');
             }
-            updateUI();
+            let raw = cleanString(val);
+            let newRaw = raw.substring(0, raw.length - 1);
+            input.value = formatString(newRaw);
+            
+            if(appMode === 'calc') calculate(false);
+            else updateUI(true);
         }
 
-        function clearAll() {
+        function clearAll(fullReset = true) {
             playSound();
-            if (appMode === 'calc') calcInput = '';
-            else if (appMode === 'scale') { scaleWeight = ''; scalePrice = ''; }
-            else if (appMode === 'speed') { speedVal = ''; timeVal = ''; }
-            else if (appMode === 'age') { ageDay = ''; ageMonth = ''; ageYear = ''; activeAgeInput = 'day'; }
-            else if (appMode === 'diff') { ageDay = ''; ageMonth = ''; ageYear = ''; diffStep = 1; diffStart = null; activeAgeInput = 'day'; }
-            updateUI();
-        }
-
-        function calculate(saveToHistory) {
-            if (appMode === 'calc') {
-                if(!calcInput) return;
-                try {
-                    let rawRes = eval(calcInput);
-                    if(saveToHistory) addToHistory(calcInput, rawRes, activeCalcCurr);
-                    saveState();
-                } catch (e) {}
-            } else if (appMode === 'diff' && diffStep === 1) {
-                if(!ageDay || !ageMonth || !ageYear) return;
-                diffStart = new Date(parseInt(ageYear), parseInt(ageMonth)-1, parseInt(ageDay));
-                ageDay = ''; ageMonth = ''; ageYear = ''; activeAgeInput = 'day';
-                diffStep = 2;
-                updateUI();
+            ['val1', 'val2', 'val3'].forEach(id => document.getElementById(id).value = '');
+            if(fullReset) {
+                if(appMode === 'diff') { diffStep = 1; diffStart = null; setActiveInput('val1'); }
+                if(appMode === 'age') setActiveInput('val1');
+                lastRepeatedOp = null;
             }
+            isFinalState = false;
+            document.getElementById('resultContainer').classList.remove('final-state');
+            document.getElementById('mainResult').innerText = '0';
+            document.getElementById('subResult').innerText = '';
         }
 
-        function calculateAgeLogic(targetDate) {
-            if(!ageDay || !ageMonth || !ageYear) return null;
-            if(ageYear.length < 4) return null;
-            const d = parseInt(ageDay); const m = parseInt(ageMonth); const y = parseInt(ageYear);
-            if(d>31 || m>12) return { error: 'التاريخ خطأ' };
+        // --- SEQUENTIAL MATH LOGIC (Left-To-Right) ---
+        
+        function computeSequential(expr) {
+            try {
+                // 1. تفكيك النص إلى أرقام وعمليات
+                // نستخدم Regex لفصل الأرقام والعمليات والنسبة المئوية
+                let tokens = expr.match(/(\d+(\.\d+)?)|([\+\-\*\/\%\(\)])/g);
+                if (!tokens) return 0;
 
-            const birthDate = new Date(y, m - 1, d);
-            const refDate = targetDate ? targetDate : new Date();
-            
-            let years = refDate.getFullYear() - birthDate.getFullYear();
-            let months = refDate.getMonth() - birthDate.getMonth();
-            let days = refDate.getDate() - birthDate.getDate();
-
-            if (days < 0) { months--; const prev = new Date(refDate.getFullYear(), refDate.getMonth(), 0); days += prev.getDate(); }
-            if (months < 0) { years--; months += 12; }
-
-            let nextB = null;
-            if(appMode === 'age') {
-                const today = new Date();
-                let next = new Date(today.getFullYear(), m - 1, d);
-                if (today > next) next.setFullYear(today.getFullYear() + 1);
-                const diffT = Math.abs(next - today);
-                nextB = Math.ceil(diffT / (1000 * 60 * 60 * 24)); 
-            }
-            return { years: Math.abs(years), months: Math.abs(months), days: Math.abs(days), nextBirthday: nextB };
-        }
-
-        function formatReadable(num) {
-            if (num === undefined || num === null || isNaN(num)) return '0';
-            let str = num.toLocaleString('en-US', { maximumFractionDigits: 12, useGrouping: false });
-            let parts = str.split('.');
-            parts[0] = Number(parts[0]).toLocaleString('en-US');
-            if (parts[1]) parts[1] = parts[1].match(/.{1,3}/g).join(',');
-            return parts.join('.');
-        }
-
-        function updateUI() {
-            const box1 = document.getElementById('box1'); const box2 = document.getElementById('box2'); const box3 = document.getElementById('box3');
-            const val1 = document.getElementById('val1'); const val2 = document.getElementById('val2'); const val3 = document.getElementById('val3');
-            const mainRes = document.getElementById('mainResult'); const subRes = document.getElementById('subResult');
-            const btnEqual = document.getElementById('btnEqual');
-            
-            document.querySelectorAll('.tool-box').forEach(el => el.classList.remove('active'));
-            if(appMode !== 'calc') document.getElementById('tool' + appMode.charAt(0).toUpperCase() + appMode.slice(1)).classList.add('active');
-            
-            btnEqual.innerText = '='; btnEqual.style.background = '';
-
-            if (appMode === 'calc') {
-                box3.style.display = 'none'; 
-                document.getElementById('label1').innerText = "ليرة"; document.getElementById('label2').innerText = "دولار";
+                // 2. المعالجة الذكية للنسبة المئوية (Merchant Logic)
+                // الهدف: تحويل "100 - 10%" إلى "100 - 10" (أي خصم 10)
+                let processedTokens = [];
                 
-                box1.className = `curr-box ${activeCalcCurr==='LBP'?'active':''}`;
-                box2.className = `curr-box ${activeCalcCurr==='USD'?'active':''}`;
+                for (let i = 0; i < tokens.length; i++) {
+                    if (tokens[i] === '%') {
+                        // الرقم الذي قبل علامة %
+                        let currentVal = parseFloat(processedTokens.pop()); 
+                        
+                        // العملية التي سبقت الرقم (مثلاً + أو -)
+                        let prevOp = processedTokens.length > 0 ? processedTokens[processedTokens.length - 1] : null;
+                        
+                        // الرقم الأساسي الذي سنحسب النسبة منه (المبلغ الأصلي)
+                        let baseNumber = processedTokens.length > 1 ? parseFloat(processedTokens[processedTokens.length - 2]) : 0;
 
-                let vEq = calcInput.replace(/\*/g,'×').replace(/\//g,'÷');
-                vEq = vEq.replace(/\d+/g, (n) => Number(n).toLocaleString('en-US'));
+                        if ((prevOp === '+' || prevOp === '-') && !isNaN(baseNumber)) {
+                             // حالة الخصم والزيادة: النسبة تكون من المبلغ الأساسي
+                             // مثال: 200000 - 10%  --> الـ 10% تصبح 20000
+                             let percentValue = baseNumber * (currentVal / 100);
+                             processedTokens.push(percentValue);
+                        } else {
+                            // حالة الضرب والقسمة العادية: مجرد قسمة على 100
+                            // مثال: 5000 * 50% --> تعني 5000 * 0.5
+                            processedTokens.push(currentVal / 100);
+                        }
+                    } else {
+                        processedTokens.push(tokens[i]);
+                    }
+                }
+                tokens = processedTokens;
 
-                if(activeCalcCurr === 'LBP') { val1.innerText = vEq || '0'; val2.innerText = '---'; } 
-                else { val2.innerText = vEq || '0'; val1.innerText = '---'; }
+                // 3. الحساب التسلسلي (تراكمي - مثل آلة المحل)
+                let result = 0;
+                let currentOp = '+';
+                let i = 0;
 
-                const rate = parseFloat(document.getElementById('exchangeRate').value) || 1;
-                let res = 0; try { let c = calcInput; if(['+','-','*','/','%'].includes(c.slice(-1))) c=c.slice(0,-1); res = eval(c)||0; } catch{}
-
-                if(activeCalcCurr === 'LBP') {
-                    mainRes.innerText = formatReadable(res); 
-                    subRes.innerText = formatReadable(res / rate) + ' $';
-                } else {
-                    mainRes.innerText = formatReadable(res) + ' $';
-                    subRes.innerText = formatReadable(res * rate); 
+                // معالجة الرقم الأول (أو إذا كان سالباً)
+                if (tokens.length > 0 && !isNaN(parseFloat(tokens[0]))) {
+                    result = parseFloat(tokens[0]);
+                    i = 1;
+                } else if (tokens.length > 1 && tokens[0] === '-' && !isNaN(parseFloat(tokens[1]))) {
+                    result = -1 * parseFloat(tokens[1]);
+                    i = 2;
                 }
 
-            } else if (appMode === 'scale') {
-                box3.style.display = 'none';
-                document.getElementById('label1').innerText = "الوزن (غ)"; document.getElementById('label2').innerText = "السعر (للكيلو)";
+                // حلقة الحساب
+                while (i < tokens.length) {
+                    let token = tokens[i];
+                    
+                    if (['+', '-', '*', '/'].includes(token)) {
+                        currentOp = token;
+                        if (i + 1 < tokens.length) {
+                            let nextVal = parseFloat(tokens[i + 1]);
+                            if (!isNaN(nextVal)) {
+                                switch (currentOp) {
+                                    case '+': result += nextVal; break;
+                                    case '-': result -= nextVal; break;
+                                    case '*': result *= nextVal; break;
+                                    case '/': if(nextVal !== 0) result /= nextVal; break;
+                                }
+                                i++; 
+                            }
+                        }
+                    } 
+                    i++;
+                }
+
+                return result;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        function calculate(isEqualPressed) {
+            if (appMode === 'calc') {
+                const inputEl = document.getElementById('val1');
+                let rawInput = cleanString(inputEl.value);
+
+                // --- التعديل هنا ---
+                // السماح لعلامة % بالمرور للحساب، وحذف باقي العمليات (+ - * /) فقط إذا كانت في آخر السطر
+                const lastChar = rawInput.slice(-1);
+                if (['+','-','*','/'].includes(lastChar)) {
+                    if (!isEqualPressed) return; 
+                    rawInput = rawInput.slice(0, -1);
+                }
+                // -------------------
+
+                let result = 0;
+
+                if (isEqualPressed && isFinalState && lastRepeatedOp) {
+                    let tempExpr = `${lastResultValue}${lastRepeatedOp.op}${lastRepeatedOp.val}`;
+                    result = computeSequential(tempExpr);
+                } else {
+                    result = computeSequential(rawInput);
+                    
+                    if (isEqualPressed) {
+                        // حفظ آخر عملية للتكرار
+                        // نستخدم regex يستثني الـ % من كونه عملية "تكرار" تقليدية لتجنب الأخطاء
+                        const match = rawInput.match(/([\+\-\*\/])(\d+(\.\d+)?)$/);
+                        if (match) {
+                            lastRepeatedOp = { op: match[1], val: match[2] };
+                        } else {
+                            // إذا انتهت بـ % لا نقوم بحفظ التكرار بنفس الطريقة لأن الحساب تم داخلياً
+                            lastRepeatedOp = null;
+                        }
+                    }
+                }
                 
-                box1.className = `curr-box ${activeScaleInput==='weight'?'active':''}`;
-                box2.className = `curr-box ${activeScaleInput==='price'?'active':''}`;
+                lastResultValue = result;
 
-                val1.innerText = scaleWeight ? formatReadable(parseFloat(scaleWeight)) : '0';
-                val2.innerText = scalePrice ? formatReadable(parseFloat(scalePrice)) : '0';
+                // --- Currency Conversion ---
+                const rate = parseFloat(document.getElementById('exchangeRate').value) || 1;
+                let lbpVal = 0, usdVal = 0;
+                let mainText = '', subText = '';
 
-                let w = parseFloat(scaleWeight) || 0; let p = parseFloat(scalePrice) || 0;
+                if (activeCalcCurr === 'LBP') {
+                    lbpVal = result; usdVal = result / rate;
+                    mainText = formatReadable(lbpVal);
+                    subText = formatReadable(usdVal) + ' $';
+                } else {
+                    usdVal = result; lbpVal = result * rate;
+                    mainText = formatReadable(usdVal) + ' $';
+                    subText = formatReadable(lbpVal) + ' L.L';
+                }
+
+                // Render
+                const mainResEl = document.getElementById('mainResult');
+                const subResEl = document.getElementById('subResult');
+                fitText(mainResEl, mainText, true);
+                fitText(subResEl, subText, false);
+
+                if (isEqualPressed) {
+                    addToHistory(rawInput, result, activeCalcCurr);
+                    isFinalState = true;
+                    document.getElementById('resultContainer').classList.add('final-state');
+                } else {
+                    isFinalState = false;
+                    document.getElementById('resultContainer').classList.remove('final-state');
+                }
+
+            } else if (appMode === 'diff' && isEqualPressed && diffStep === 1) {
+                let d = document.getElementById('val1').value;
+                let m = document.getElementById('val2').value;
+                let y = document.getElementById('val3').value;
+                if(d && m && y) {
+                    diffStart = new Date(parseInt(y), parseInt(m)-1, parseInt(d));
+                    clearAll(false);
+                    diffStep = 2;
+                    setActiveInput('val1');
+                    updateUI(true);
+                }
+            } else if (isEqualPressed) {
+                updateUI(true);
+            }
+        }
+
+
+        function liveCalculateOtherModes() {
+            const v1 = cleanString(document.getElementById('val1').value);
+            const v2 = cleanString(document.getElementById('val2').value);
+            const v3 = cleanString(document.getElementById('val3').value);
+            const mainRes = document.getElementById('mainResult');
+            const subRes = document.getElementById('subResult');
+
+            if (appMode === 'scale') {
+                let w = parseFloat(v1) || 0; let p = parseFloat(v2) || 0;
                 mainRes.innerText = formatReadable((w * p) / 1000);
                 subRes.innerText = "الإجمالي";
-
-            } else if (appMode === 'speed') {
-                box3.style.display = 'none';
-                document.getElementById('label1').innerText = "السرعة (كم/سا)"; 
-                let unitT = "ثانية"; if(timeUnit==='min') unitT="دقيقة"; if(timeUnit==='hour') unitT="ساعة";
-                document.getElementById('label2').innerText = "الوقت (" + unitT + ") 🔁";
-
-                box1.className = `curr-box ${activeSpeedInput==='speed'?'active':''}`;
-                box2.className = `curr-box ${activeSpeedInput==='time'?'active':''}`;
-
-                val1.innerText = speedVal ? formatReadable(parseFloat(speedVal)) : '0';
-                val2.innerText = timeVal ? formatReadable(parseFloat(timeVal)) : '0';
-
-                let s = parseFloat(speedVal) || 0; let t = parseFloat(timeVal) || 0;
+            } 
+            else if (appMode === 'speed') {
+                let s = parseFloat(v1) || 0; let t = parseFloat(v2) || 0;
                 let distKM = 0;
                 if(timeUnit === 'hour') distKM = s * t;
                 else if(timeUnit === 'min') distKM = s * (t / 60);
                 else distKM = s * (t / 3600);
-
                 mainRes.innerText = formatReadable(distKM) + ' كم';
                 subRes.innerText = formatReadable(distKM * 1000) + ' متر';
-
-            } else if (appMode === 'age' || appMode === 'diff') {
-                box3.style.display = 'block';
-                document.getElementById('label1').innerText = "اليوم"; document.getElementById('label2').innerText = "الشهر"; document.getElementById('label3').innerText = "السنة";
-                
-                if (appMode === 'diff') {
-                    subRes.innerText = diffStep === 1 ? "أدخل التاريخ الأول (1)" : "أدخل التاريخ الثاني (2)";
-                    btnEqual.innerText = diffStep === 1 ? "التالي" : "=";
-                    btnEqual.style.background = diffStep === 1 ? 'var(--btn-text-blue)' : ''; 
-                } else {
-                    subRes.innerText = "أدخل تاريخ ميلادك";
-                }
-
-                box1.className = `curr-box ${activeAgeInput==='day'?'active':''}`;
-                box2.className = `curr-box ${activeAgeInput==='month'?'active':''}`;
-                box3.className = `curr-box ${activeAgeInput==='year'?'active':''}`;
-
-                val1.innerText = ageDay || 'DD'; val2.innerText = ageMonth || 'MM'; val3.innerText = ageYear || 'YYYY';
-
-                mainRes.innerText = '';
-                
+            }
+            else if (appMode === 'age' || appMode === 'diff') {
                 let dateRes = null;
-                if(appMode === 'age') dateRes = calculateAgeLogic(null);
+                if(appMode === 'age') dateRes = calculateAgeLogic(null, v1, v2, v3);
                 else if (appMode === 'diff' && diffStep === 2) {
-                    if(diffStart && ageDay && ageMonth && ageYear.length===4) {
-                         const d2 = new Date(parseInt(ageYear), parseInt(ageMonth)-1, parseInt(ageDay));
+                     if(diffStart && v1 && v2 && v3.length===4) {
+                         const d2 = new Date(parseInt(v3), parseInt(v2)-1, parseInt(v1));
                          let t1 = diffStart.getTime(); let t2 = d2.getTime();
                          let start = (t1 < t2) ? diffStart : d2; let end = (t1 < t2) ? d2 : diffStart;
-                         let y = end.getFullYear() - start.getFullYear();
-                         let m = end.getMonth() - start.getMonth();
-                         let d = end.getDate() - start.getDate();
-                         if (d < 0) { m--; let pm = new Date(end.getFullYear(), end.getMonth(), 0); d += pm.getDate(); }
-                         if (m < 0) { y--; m += 12; }
-                         dateRes = { years: y, months: m, days: d };
+                         let yy = end.getFullYear() - start.getFullYear();
+                         let mm = end.getMonth() - start.getMonth();
+                         let dd = end.getDate() - start.getDate();
+                         if (dd < 0) { mm--; let pm = new Date(end.getFullYear(), end.getMonth(), 0); dd += pm.getDate(); }
+                         if (mm < 0) { yy--; mm += 12; }
+                         dateRes = { years: yy, months: mm, days: dd };
                     }
                 }
 
@@ -802,18 +886,139 @@
                         </div>`;
                     if(appMode === 'age') subRes.innerText = `عيد ميلادك القادم بعد: ${dateRes.nextBirthday} يوم 🎂`;
                     else subRes.innerText = "الفرق الزمني";
-                } else if (dateRes && dateRes.error) {
-                    mainRes.innerText = dateRes.error;
                 } else {
                     mainRes.innerText = '...';
                 }
             }
+        }
+
+        function calculateAgeLogic(targetDate, dStr, mStr, yStr) {
+            if(!dStr || !mStr || !yStr) return null;
+            if(yStr.length < 4) return null;
+            const d = parseInt(dStr); const m = parseInt(mStr); const y = parseInt(yStr);
+            if(d>31 || m>12) return { error: 'التاريخ خطأ' };
+            const birthDate = new Date(y, m - 1, d);
+            const refDate = targetDate ? targetDate : new Date();
+            let years = refDate.getFullYear() - birthDate.getFullYear();
+            let months = refDate.getMonth() - birthDate.getMonth();
+            let days = refDate.getDate() - birthDate.getDate();
+            if (days < 0) { months--; const prev = new Date(refDate.getFullYear(), refDate.getMonth(), 0); days += prev.getDate(); }
+            if (months < 0) { years--; months += 12; }
+            let nextB = null;
+            if(appMode === 'age') {
+                const today = new Date();
+                let next = new Date(today.getFullYear(), m - 1, d);
+                if (today > next) next.setFullYear(today.getFullYear() + 1);
+                const diffT = Math.abs(next - today);
+                nextB = Math.ceil(diffT / (1000 * 60 * 60 * 24)); 
+            }
+            return { years: Math.abs(years), months: Math.abs(months), days: Math.abs(days), nextBirthday: nextB };
+        }
+
+        function fitText(el, text, isMain) {
+            const len = text.length;
+            let size = isMain ? 2.4 : 1.4;
             
+            if(isFinalState) {
+                size = isMain ? 2.8 : 1.6; 
+                if (len > 10) size = isMain ? 2.2 : 1.3;
+                if (len > 15) size = isMain ? 1.7 : 1.0;
+                if (len > 22) size = isMain ? 1.3 : 0.8;
+                if (len > 30) size = isMain ? 1.0 : 0.7;
+            } else {
+                if (len > 12) size = isMain ? 2.0 : 1.2;
+                if (len > 18) size = isMain ? 1.6 : 1.0;
+                if (len > 24) size = isMain ? 1.2 : 0.8;
+                if (len > 32) size = isMain ? 1.0 : 0.7;
+            }
+            el.style.fontSize = size + 'rem';
+            el.innerText = text;
+        }
+
+        function formatReadable(num) {
+            if (num === undefined || num === null || isNaN(num)) return '0';
+            let str = parseFloat(num.toFixed(10)).toLocaleString('en-US', { useGrouping: false });
+            let parts = str.split('.');
+            parts[0] = Number(parts[0]).toLocaleString('en-US');
+            return parts[0] + (parts[1] ? '.' + parts[1].replace(/,/g, '') : '');
+        }
+
+        function switchMode(mode) {
+            appMode = mode;
+            clearAll(); 
+            document.getElementById('toolsMenu').style.display = 'none';
+            const box1 = document.getElementById('box1');
+            const box2 = document.getElementById('box2');
+            const box3 = document.getElementById('box3');
+            const currBtn = document.getElementById('currencyToggleBtn');
+            const label1 = document.getElementById('label1');
+
+            if (mode === 'calc') {
+                activeInputId = 'val1';
+                box1.style.display = 'flex';
+                box2.style.display = 'none';
+                box3.style.display = 'none';
+                currBtn.style.display = 'inline-block';
+                label1.style.display = 'none';
+                activeCalcCurr = 'LBP';
+                currBtn.innerText = 'ليرة (L.L)';
+            } else {
+                box1.style.display = 'flex';
+                box2.style.display = 'flex';
+                currBtn.style.display = 'none';
+                label1.style.display = 'block';
+                activeInputId = 'val1';
+            }
+            setActiveInput(activeInputId);
+            updateUI(false);
+        }
+
+        function toggleTools() {
+            const menu = document.getElementById('toolsMenu');
+            menu.style.display = (menu.style.display === 'grid') ? 'none' : 'grid';
+        }
+
+        function updateUI(reCalc) {
+            const box1 = document.getElementById('box1'); const box2 = document.getElementById('box2'); const box3 = document.getElementById('box3');
+            const btnEqual = document.getElementById('btnEqual');
+            
+            document.querySelectorAll('.tool-box').forEach(el => el.classList.remove('active'));
+            if(appMode !== 'calc') document.getElementById('tool' + appMode.charAt(0).toUpperCase() + appMode.slice(1)).classList.add('active');
+            
+            btnEqual.innerText = '='; btnEqual.style.background = '';
+
+            if (appMode === 'calc') {
+                if(reCalc) calculate(false);
+            } else if (appMode === 'scale') {
+                box3.style.display = 'none';
+                box2.style.display = 'flex'; 
+                document.getElementById('label1').innerText = "الوزن (غ)"; document.getElementById('label2').innerText = "السعر (للكيلو)";
+                if(reCalc) liveCalculateOtherModes();
+            } else if (appMode === 'speed') {
+                box3.style.display = 'none';
+                box2.style.display = 'flex';
+                document.getElementById('label1').innerText = "السرعة (كم/سا)"; 
+                let unitT = "ثانية"; if(timeUnit==='min') unitT="دقيقة"; if(timeUnit==='hour') unitT="ساعة";
+                document.getElementById('label2').innerText = "الوقت (" + unitT + ") 🔁";
+                if(reCalc) liveCalculateOtherModes();
+            } else if (appMode === 'age' || appMode === 'diff') {
+                box3.style.display = 'flex';
+                box2.style.display = 'flex';
+                document.getElementById('label1').innerText = "اليوم"; document.getElementById('label2').innerText = "الشهر"; document.getElementById('label3').innerText = "السنة";
+                if (appMode === 'diff') {
+                    document.getElementById('subResult').innerText = diffStep === 1 ? "أدخل التاريخ الأول (1)" : "أدخل التاريخ الثاني (2)";
+                    btnEqual.innerText = diffStep === 1 ? "التالي" : "=";
+                    btnEqual.style.background = diffStep === 1 ? 'var(--blue-color)' : ''; 
+                } else {
+                    document.getElementById('subResult').innerText = "أدخل تاريخ ميلادك";
+                }
+                if(reCalc) liveCalculateOtherModes();
+            }
             saveState();
         }
 
+        // --- History & Storage ---
         function openHistory() { 
-            // Close tools menu if open
             document.getElementById('toolsMenu').style.display = 'none';
             renderHistory(); 
             document.getElementById('historyModal').classList.add('show'); 
@@ -824,9 +1029,11 @@
         function clearHistory() { historyData=[]; saveState(); renderHistory(); }
 
         function addToHistory(eq, res, curr) {
+            if(!eq || res === 0) return;
             const time = new Date().toLocaleTimeString('ar-LB',{hour:'2-digit',minute:'2-digit'});
             historyData.unshift({ eq, res, curr, time });
             if(historyData.length > 30) historyData.pop();
+            saveState();
         }
         function renderHistory() {
             const list = document.getElementById('historyList'); list.innerHTML = '';
@@ -834,8 +1041,14 @@
             historyData.forEach(item => {
                 const li = document.createElement('li'); li.className = 'history-item';
                 let vEq = item.eq.replace(/\*/g,'×').replace(/\//g,'÷');
-                li.innerHTML = `<div style="font-size:0.8rem; direction:ltr">${vEq}</div><div style="font-weight:bold; color:var(--btn-text-blue); direction:ltr">= ${formatReadable(item.res)} ${item.curr==='LBP'?'': '$'}</div>`;
-                li.onclick = () => { calcInput = item.eq; if(appMode==='calc') activeCalcCurr = item.curr; closeModals(); updateUI(); };
+                li.innerHTML = `<div style="font-size:0.8rem; direction:ltr">${vEq}</div><div style="font-weight:bold; color:var(--blue-color); direction:ltr">= ${formatReadable(item.res)} ${item.curr==='LBP'?'': '$'}</div>`;
+                li.onclick = () => { 
+                    closeModals();
+                    activeCalcCurr = item.curr;
+                    document.getElementById('currencyToggleBtn').innerText = (item.curr === 'LBP') ? 'ليرة (L.L)' : 'دولار ($)';
+                    document.getElementById('val1').value = formatString(item.eq); 
+                    calculate(true); 
+                };
                 list.appendChild(li);
             });
         }
@@ -849,16 +1062,34 @@
             if(localStorage.getItem('hist')) historyData = JSON.parse(localStorage.getItem('hist'));
         }
 
-        window.addEventListener('popstate', ()=>{
-            history.pushState(null,null,location.href);
-            if(document.querySelector('.modal.show')) { closeModals(); return; }
-            if(document.getElementById('toolsMenu').style.display === 'grid') { toggleTools(); return; }
-            if(appMode !== 'calc') { switchMode('calc'); return; }
-            if(calcInput.length > 0) deleteChar();
-        });
-
-        document.getElementById('exchangeRate').addEventListener('input', () => { updateUI(); saveState(); });
+        document.getElementById('exchangeRate').addEventListener('input', () => { updateUI(true); saveState(); });
         document.getElementById('btnSaveRate').addEventListener('click', closeModals);
+
+        // --- KODULAR INTEGRATION ---
+        function handleAndroidBack() {
+            if(document.querySelector('.modal.show')) {
+                closeModals();
+                sendToKodular("STAY");
+                return;
+            }
+            if(document.getElementById('toolsMenu').style.display === 'grid') {
+                toggleTools();
+                sendToKodular("STAY");
+                return;
+            }
+            if(appMode !== 'calc') {
+                switchMode('calc');
+                sendToKodular("STAY");
+                return;
+            }
+            sendToKodular("EXIT");
+        }
+
+        function sendToKodular(message) {
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(message);
+            }
+        }
         
     </script>
 </body>
