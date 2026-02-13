@@ -613,9 +613,14 @@
             const operators = ['+','-','*','/','%'];
             const lastChar = rawVal.slice(-1);
 
-            // 1. Operator replacement logic
+            // 1. منطق استبدال العمليات (التعديل هنا)
+            // إذا كان الحرف الجديد عملية حسابية، والحرف السابق عملية حسابية أيضاً
             if (operators.includes(char) && operators.includes(lastChar) && appMode === 'calc') {
-                val = val.slice(0, -1); 
+                // نمنع الاستبدال فقط إذا كان الحرف السابق هو %
+                // لأننا نريد السماح بوجود %+ أو %- أو %*
+                if (lastChar !== '%') {
+                    val = val.slice(0, -1);
+                }
             }
 
             // 2. Decimal logic
@@ -626,7 +631,7 @@
                 if (currentNumber === '') char = '0.'; 
             }
 
-            // 3. IMPLICIT MULTIPLICATION AFTER % (Fix for User)
+            // 3. IMPLICIT MULTIPLICATION AFTER %
             // If previous char was %, and user types a number, insert * automatically
             if (lastChar === '%' && !operators.includes(char) && char !== '.') {
                 char = '*' + char;
